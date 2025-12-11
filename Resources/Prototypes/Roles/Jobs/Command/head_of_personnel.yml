@@ -70,6 +70,10 @@
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
+  traitsBlacklist:
+    - Blindness
+    - PoorVision
+    - Muted
 
 - type: startingGear
   id: HoPGear

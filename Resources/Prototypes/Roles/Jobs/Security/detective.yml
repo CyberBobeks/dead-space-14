@@ -28,6 +28,10 @@
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant ]
+  traitsBlacklist:
+    - Blindness
+    - PoorVision
+    - Muted
 
 - type: startingGear
   id: DetectiveGear

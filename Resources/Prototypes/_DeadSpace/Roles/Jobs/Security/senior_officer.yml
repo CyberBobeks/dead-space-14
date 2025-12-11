@@ -38,6 +38,9 @@
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant ]
+  traitsBlacklist:
+    - Blindness
+    - PoorVision
 
 - type: startingGear
   id: SeniorOfficerGear

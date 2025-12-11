@@ -43,6 +43,9 @@
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
+  traitsBlacklist:
+    - Blindness
+    - PoorVision
 
 - type: startingGear
   id: CMOGear

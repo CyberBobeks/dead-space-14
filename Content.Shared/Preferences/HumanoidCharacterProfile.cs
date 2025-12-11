@@ -614,6 +614,12 @@ namespace Content.Shared.Preferences
             var hasHighPrio = false;
             foreach (var (key, value) in priorities)
             {
+                if (TraitPreferences.Intersect(prototypeManager.Index(key).TraitsBlacklist).Any())
+                {
+                    priorities.Remove(key);
+                    continue;
+                }
+
                 if (value != JobPriority.High)
                     continue;
 
