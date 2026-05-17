@@ -233,7 +233,7 @@ namespace Content.Server.Zombies
                 }
             }
 
-            var zombificationResistanceEv = new ZombificationResistanceQueryEvent(ProtectiveSlots);
+            var zombificationResistanceEv = new ZombificationResistanceQueryEvent(SlotFlags.OUTERCLOTHING);
             RaiseLocalEvent(uid, zombificationResistanceEv);
             chance *= zombificationResistanceEv.TotalCoefficient;
 
@@ -267,7 +267,7 @@ namespace Content.Server.Zombies
                     _damageable.TryChangeDamage(args.User, entity.Comp.HealingOnBite, true, false);
 
                     // If we cannot infect the living target, the zed will just heal itself.
-                    if (HasComp<ZombieImmuneComponent>(uid) || cannotSpread || !_random.Prob(GetZombieInfectionChance(uid, entity.Comp)))
+                    if (HasComp<ZombieImmuneComponent>(uid) || cannotSpread || HasComp<PendingZombieComponent>(uid) || !_random.Prob(GetZombieInfectionChance(uid, entity.Comp)))
                         continue;
 
                     EnsureComp<PendingZombieComponent>(uid);

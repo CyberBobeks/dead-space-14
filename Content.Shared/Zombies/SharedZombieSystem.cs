@@ -20,12 +20,13 @@ public abstract class SharedZombieSystem : EntitySystem
 
     private void OnResistanceQuery(Entity<ZombificationResistanceComponent> ent, ref InventoryRelayedEvent<ZombificationResistanceQueryEvent> query)
     {
-        query.Args.TotalCoefficient *= ent.Comp.ZombificationResistanceCoefficient;
+        query.Args.TotalCoefficient *= ClampResistanceCoefficient(ent.Comp.ZombificationResistanceCoefficient);
     }
 
     private void OnArmorExamine(Entity<ZombificationResistanceComponent> ent, ref ArmorExamineEvent args)
     {
-        var value = MathF.Round((1f - ent.Comp.ZombificationResistanceCoefficient) * 100, 1);
+        var coefficient = ClampResistanceCoefficient(ent.Comp.ZombificationResistanceCoefficient);
+        var value = MathF.Round((1f - coefficient) * 10, 1);
 
         if (value == 0)
             return;
@@ -38,6 +39,11 @@ public abstract class SharedZombieSystem : EntitySystem
     {
         var mod = component.ZombieMovementSpeedDebuff;
         args.ModifySpeed(mod, mod);
+    }
+
+    private static float ClampResistanceCoefficient(float coefficient)
+    {
+        return Math.Clamp(coefficient, 0f, 1f);
     }
 
     private void OnRefreshNameModifiers(Entity<ZombieComponent> entity, ref RefreshNameModifiersEvent args)
