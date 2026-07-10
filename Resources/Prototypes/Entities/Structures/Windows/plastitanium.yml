@@ -64,14 +64,30 @@
   parent: PlastitaniumWindowBase
   components:
   - type: Sprite
-    drawdepth: WallTops
-    sprite: Structures/Windows/plastitanium_window.rsi
+# DS14-start
+    drawdepth: Mobs
+    sprite: Structures/Windows/window_glass.rsi
+    offset: "0, 0"
+    noRot: true
+    layers:
+    - sprite: Structures/Windows/window_glass.rsi
+      state: full
+      visible: false
+# DS14-end
   - type: Icon
-    sprite: Structures/Windows/plastitanium_window.rsi
+# DS14-start
+    sprite: Structures/Windows/window_glass.rsi
     state: full
+# DS14-end
   - type: IconSmooth
-    key: walls # DS14
-    base: ptwindow
+# DS14-start
+    key: windows-glass
+    base: window
+    additionalCornerLayers:
+      window-frame:
+        sprite: Structures/Windows/window_glass_framed.rsi
+        base: windowframe
+# DS14-end
   - type: Airtight
   - type: Fixtures
     fixtures:
@@ -160,7 +176,7 @@
     state: state0
   - type: IconSmooth
     mode: Diagonal
-    key: walls # DS14
+    key: windows-plastitanium-diagonal # DS14
     base: state
 # DS14-start
   - type: DamageVisuals

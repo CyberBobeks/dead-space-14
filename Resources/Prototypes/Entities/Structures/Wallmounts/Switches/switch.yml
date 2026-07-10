@@ -8,7 +8,7 @@
     arc: 360
   - type: StationAiWhitelist
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/switch.rsi
     state: on
   - type: SignalSwitch
@@ -61,7 +61,7 @@
     arc: 360
   - type: StationAiWhitelist
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/switch.rsi
     state: dead
   - type: UseDelay
@@ -112,7 +112,7 @@
   - type: WallMount
     arc: 360
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/switch.rsi
     state: on
   - type: Rotatable
@@ -179,7 +179,7 @@
   - type: LockVisuals
   - type: AccessReader
   - type: Sprite
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/locked_switch.rsi
     layers:
     - state: base
@@ -453,7 +453,7 @@
   - type: Physics
     canCollide: false
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/switch_frame.rsi
     state: grey
   - type: Rotatable
@@ -465,7 +465,7 @@
   suffix: grey
   components:
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/switch_frame.rsi
     state: grey
 
@@ -475,7 +475,7 @@
   suffix: caution
   components:
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/switch_frame.rsi
     state: caution
 
@@ -485,7 +485,7 @@
   suffix: caution
   components:
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/switch_frame.rsi
     state: caution_security
 
@@ -495,7 +495,7 @@
   suffix: exit
   components:
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/switch_frame.rsi
     state: exit
 
@@ -505,6 +505,6 @@
   suffix: janitor
   components:
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/switch_frame.rsi
     state: janitor

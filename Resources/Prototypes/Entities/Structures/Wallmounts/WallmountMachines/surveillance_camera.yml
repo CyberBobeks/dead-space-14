@@ -55,7 +55,7 @@
     damageContainer: StructuralInorganic
     damageModifierSet: Metallic
   - type: Sprite
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/camera.rsi
     layers:
       - map: [ "enum.SurveillanceCameraVisualsKey.Layer" ]
@@ -240,7 +240,7 @@
       damageContainer: StructuralInorganic
       damageModifierSet: Metallic
     - type: Sprite
-      drawdepth: WallMountedItems
+      drawdepth: OverMobs # DS14
       sprite: Structures/Wallmounts/camera.rsi
       layers:
         - state: camera_off

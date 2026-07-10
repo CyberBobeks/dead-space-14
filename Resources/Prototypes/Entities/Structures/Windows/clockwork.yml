@@ -4,11 +4,6 @@
   description: Don't smudge up the brass down there.
   parent: Window
   components:
-  - type: Sprite
-    drawdepth: WallTops
-    sprite: Structures/Windows/clockwork_window.rsi
-  - type: Icon
-    sprite: Structures/Windows/clockwork_window.rsi
   - type: Repairable
     fuelCost: 10
     doAfterDelay: 2
@@ -40,8 +35,6 @@
             max: 2
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
-  - type: IconSmooth
-    base: cwindow
   - type: Construction
     graph: Window
     node: clockworkWindow

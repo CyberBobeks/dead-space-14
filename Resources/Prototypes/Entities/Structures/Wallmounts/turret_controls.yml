@@ -6,7 +6,7 @@
   components:
   - type: Sprite
     noRot: false
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/turret_controls.rsi
     layers:
     - state: base
@@ -56,7 +56,7 @@
   - type: Appearance
   - type: Sprite
     noRot: false
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/turret_controls.rsi
     layers:
     - state: base

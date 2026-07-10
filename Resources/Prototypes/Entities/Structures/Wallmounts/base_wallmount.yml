@@ -21,7 +21,7 @@
     tags:
     - Structure
   - type: Sprite
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
 
 - type: entity
   parent: BaseWallmount

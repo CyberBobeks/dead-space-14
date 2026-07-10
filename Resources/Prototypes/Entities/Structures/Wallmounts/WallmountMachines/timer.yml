@@ -8,7 +8,7 @@
   - type: WallMount
     arc: 360
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/switch.rsi
     state: on
   - type: Appearance
@@ -70,7 +70,7 @@
     # textLength: 5 This field does not exist. Bug?
     rows: 1
   - type: Sprite
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/signalscreen.rsi
     state: signalscreen
     noRot: true
@@ -108,7 +108,7 @@
   description: A construction frame for a timer.
   components:
   - type: Sprite
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/signalscreen.rsi
     state: signalscreen
   - type: Construction

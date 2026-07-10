@@ -180,7 +180,7 @@
   - type: Transform
     anchored: true
   - type: Sprite # TODO: add sprite for maintenance panel open
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
     sprite: Structures/Power/substation.rsi
     layers:
     - state: substation_wall
@@ -276,7 +276,7 @@
   - type: Transform
     anchored: true
   - type: Sprite
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
     sprite: Structures/Power/substation.rsi
     layers:
     - state: substation_wall

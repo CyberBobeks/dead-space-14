@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using Robust.Client.Graphics;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
+using Robust.Shared.Utility;
 
 namespace Content.Client.IconSmoothing
 {
@@ -38,6 +39,14 @@ namespace Content.Client.IconSmoothing
         [ViewVariables(VVAccess.ReadWrite), DataField("base")]
         public string StateBase { get; set; } = string.Empty;
 
+        // DS14-start
+        /// <summary>
+        ///     Extra corner layer sets that follow the same smoothing result as the primary corner layers.
+        /// </summary>
+        [DataField]
+        public Dictionary<string, IconSmoothAdditionalCornerLayer> AdditionalCornerLayers = new();
+        // DS14-end
+
         [DataField("shader", customTypeSerializer:typeof(PrototypeIdSerializer<ShaderPrototype>))]
         public string? Shader;
 
@@ -52,6 +61,18 @@ namespace Content.Client.IconSmoothing
         /// </summary>
         internal int UpdateGeneration { get; set; }
     }
+
+    // DS14-start
+    [DataDefinition]
+    public sealed partial class IconSmoothAdditionalCornerLayer
+    {
+        [DataField("base", required: true)]
+        public string StateBase = string.Empty;
+
+        [DataField]
+        public ResPath? Sprite;
+    }
+    // DS14-end
 
     /// <summary>
     ///     Controls the mode with which icon smoothing is calculated.

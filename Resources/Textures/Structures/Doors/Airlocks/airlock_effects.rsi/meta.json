@@ -1,0 +1,210 @@
+{
+    "version": 1,
+    "license": "CC-BY-SA-4.0",
+    "copyright": "By TheGypsyBaron",
+    "size": {
+        "x": 32,
+        "y": 80
+    },
+    "states": [
+        {
+            "name": "open_unlit",
+            "directions": 4
+        },
+        {
+            "name": "bolted_closed_unlit",
+            "directions": 4
+        },
+        {
+            "name": "bolted_open_unlit",
+            "directions": 4
+        },
+        {
+            "name": "welded"
+        },
+        {
+            "name": "closed_unlit",
+            "directions": 4
+        },
+        {
+            "name": "closing_unlit",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.05,
+                    0.05,
+                    0.01,
+                    0.01,
+                    1
+                ],
+                [
+                    0.1,
+                    0.05,
+                    0.05,
+                    0.01,
+                    0.01,
+                    1
+                ],
+                [
+                    0.1,
+                    0.05,
+                    0.05,
+                    0.01,
+                    0.01,
+                    1
+                ],
+                [
+                    0.1,
+                    0.05,
+                    0.05,
+                    0.01,
+                    0.01,
+                    1
+                ]
+            ]
+        },
+        {
+            "name": "deny_unlit",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
+            "name": "emergency_unlit",
+            "directions": 4,
+            "delays": [
+                [
+                    0.4,
+                    0.4
+                ],
+                [
+                    0.4,
+                    0.4
+                ],
+                [
+                    0.4,
+                    0.4
+                ],
+                [
+                    0.4,
+                    0.4
+                ]
+            ]
+        },
+        {
+            "name": "opening_unlit",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.05,
+                    0.05,
+                    0.01,
+                    0.01,
+                    1
+                ],
+                [
+                    0.1,
+                    0.05,
+                    0.05,
+                    0.01,
+                    0.01,
+                    1
+                ],
+                [
+                    0.1,
+                    0.05,
+                    0.05,
+                    0.01,
+                    0.01,
+                    1
+                ],
+                [
+                    0.1,
+                    0.05,
+                    0.05,
+                    0.01,
+                    0.01,
+                    1
+                ]
+            ]
+        },
+        {
+            "name": "panel_closing"
+        },
+        {
+            "name": "panel_open",
+            "directions": 4,
+            "delays": [
+                [
+                    0.05,
+                    0.05,
+                    0.05,
+                    0.05,
+                    0.05,
+                    3
+                ],
+                [
+                    0.05,
+                    0.05,
+                    0.05,
+                    0.05,
+                    0.05,
+                    3
+                ],
+                [
+                    0.05,
+                    0.05,
+                    0.05,
+                    0.05,
+                    0.05,
+                    3
+                ],
+                [
+                    0.05,
+                    0.05,
+                    0.05,
+                    0.05,
+                    0.05,
+                    3
+                ]
+            ]
+        },
+        {
+            "name": "panel_opening"
+        },
+        {
+            "name": "sparks"
+        },
+        {
+            "name": "sparks_open"
+        },
+        {
+            "name": "sparks_broken"
+        },
+        {
+            "name": "sparks_damaged"
+        },
+        {
+            "name": "electrified",
+            "directions": 4
+        }
+    ]
+}

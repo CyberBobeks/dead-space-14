@@ -22,7 +22,7 @@
     node: bulbLight
   - type: Sprite
     sprite: Structures/Wallmounts/Lighting/strobe_light.rsi
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
     layers:
     - map: ["enum.PoweredLightLayers.Base"]
       state: base

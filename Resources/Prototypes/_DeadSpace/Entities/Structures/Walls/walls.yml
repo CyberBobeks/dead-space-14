@@ -156,7 +156,7 @@
     graph: Girder
     node: reinforcedWallVine
   - type: IconSmooth
-    key: walls
+    key: walls-vine-reinforced
     base: reinf_over
 
 - type: entity
@@ -175,7 +175,7 @@
     graph: Girder
     node: wallvine
   - type: IconSmooth
-    key: walls
+    key: walls-vine-solid
     base: solid
   - type: Destructible
     thresholds:
@@ -212,6 +212,9 @@
   - type: Icon
     sprite: _DeadSpace/Structures/Walls/solid_dark.rsi
     state: rgeneric
+  - type: IconSmooth
+    key: walls-solid-dark-reinforced
+    base: reinf_over
 
 - type: entity
   parent: WallReinforced
@@ -229,7 +232,7 @@
     graph: Girder
     node: reinforcedWallVine
   - type: IconSmooth
-    key: walls
+    key: walls-solid-dark-rust-reinforced
     base: reinf_over
 
 - type: entity
@@ -241,9 +244,14 @@
   components:
   - type: Sprite
     sprite: _DeadSpace/Structures/Walls/solid_dark_diagonal.rsi
+    state: state0
   - type: Icon
     sprite: _DeadSpace/Structures/Walls/solid_dark_diagonal.rsi
     state: state0
+  - type: IconSmooth
+    mode: Diagonal
+    key: walls-solid-dark-diagonal
+    base: state
 
 - type: entity
   parent: WallReinforcedDiagonal
@@ -257,6 +265,10 @@
   - type: Icon
     sprite: _DeadSpace/Structures/Walls/reinforced_dark_diagonal.rsi
     state: state0
+  - type: IconSmooth
+    mode: Diagonal
+    key: walls-solid-dark-reinforced-diagonal
+    base: state
 
 - type: entity
   parent: WallPlastitanium
@@ -268,6 +280,9 @@
     sprite: _DeadSpace/Structures/Walls/titanaluminum.rsi
   - type: Icon
     sprite: _DeadSpace/Structures/Walls/titanaluminum.rsi
+  - type: IconSmooth
+    key: walls-titanaluminum
+    base: plastitanium
 
 - type: entity
   parent: WallPlastitaniumDiagonal
@@ -280,3 +295,7 @@
     sprite: _DeadSpace/Structures/Walls/titanaluminum_diagonal.rsi
   - type: Icon
     sprite: _DeadSpace/Structures/Walls/titanaluminum_diagonal.rsi
+  - type: IconSmooth
+    mode: Diagonal
+    key: walls-titanaluminum-diagonal
+    base: state

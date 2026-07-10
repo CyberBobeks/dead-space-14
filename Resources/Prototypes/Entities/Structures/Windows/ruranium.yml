@@ -3,11 +3,6 @@
   name: reinforced uranium window
   parent: [BaseDeltaPressureReinforcedPlasma, WindowRCDResistant]
   components:
-  - type: Sprite
-    drawdepth: WallTops
-    sprite: Structures/Windows/reinforced_uranium_window.rsi
-  - type: Icon
-    sprite: Structures/Windows/reinforced_uranium_window.rsi
   - type: Damageable
     damageContainer: StructuralInorganic
     damageModifierSet: RGlass
@@ -36,8 +31,6 @@
             max: 2
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
-  - type: IconSmooth
-    base: ruwindow
   - type: Construction
     graph: Window
     node: reinforcedUraniumWindow
@@ -130,7 +123,7 @@
     - Window
   - type: IconSmooth
     mode: Diagonal
-    key: walls  # Corvax-Resprite
+    key: windows-reinforced-uranium-diagonal # DS14
     base: state
   - type: Icon
     sprite: Structures/Windows/reinforced_uranium_diagonal.rsi

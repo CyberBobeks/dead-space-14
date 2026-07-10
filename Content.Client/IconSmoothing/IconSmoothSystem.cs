@@ -5,6 +5,7 @@ using Robust.Client.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Map.Enumerators;
+using Robust.Shared.Utility;
 using static Robust.Client.GameObjects.SpriteComponent;
 
 namespace Content.Client.IconSmoothing
@@ -94,7 +95,81 @@ namespace Content.Client.IconSmoothing
             _sprite.LayerSetDirOffset(sprite, CornerLayers.NW, DirectionOffset.Flip);
             _sprite.LayerMapSet(sprite, CornerLayers.SW, _sprite.AddRsiLayer(sprite, state0));
             _sprite.LayerSetDirOffset(sprite, CornerLayers.SW, DirectionOffset.Clockwise);
+
+            SetAdditionalCornerLayers(sprite, component); // DS14
         }
+
+        // DS14-start
+        private void SetAdditionalCornerLayers(Entity<SpriteComponent?> sprite, IconSmoothComponent component)
+        {
+            foreach (var (key, layer) in component.AdditionalCornerLayers)
+            {
+                _sprite.LayerMapRemove(sprite, AdditionalCornerLayerKey(key, CornerLayers.SE));
+                _sprite.LayerMapRemove(sprite, AdditionalCornerLayerKey(key, CornerLayers.NE));
+                _sprite.LayerMapRemove(sprite, AdditionalCornerLayerKey(key, CornerLayers.NW));
+                _sprite.LayerMapRemove(sprite, AdditionalCornerLayerKey(key, CornerLayers.SW));
+
+                var state0 = $"{layer.StateBase}0";
+
+                var se = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
+                _sprite.LayerMapSet(sprite, AdditionalCornerLayerKey(key, CornerLayers.SE), se);
+                _sprite.LayerSetDirOffset(sprite, se, DirectionOffset.None);
+
+                var ne = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
+                _sprite.LayerMapSet(sprite, AdditionalCornerLayerKey(key, CornerLayers.NE), ne);
+                _sprite.LayerSetDirOffset(sprite, ne, DirectionOffset.CounterClockwise);
+
+                var nw = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
+                _sprite.LayerMapSet(sprite, AdditionalCornerLayerKey(key, CornerLayers.NW), nw);
+                _sprite.LayerSetDirOffset(sprite, nw, DirectionOffset.Flip);
+
+                var sw = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
+                _sprite.LayerMapSet(sprite, AdditionalCornerLayerKey(key, CornerLayers.SW), sw);
+                _sprite.LayerSetDirOffset(sprite, sw, DirectionOffset.Clockwise);
+            }
+        }
+
+        private int AddAdditionalCornerLayer(Entity<SpriteComponent?> sprite, ResPath? spritePath, string state)
+        {
+            return spritePath == null
+                ? _sprite.AddRsiLayer(sprite, state)
+                : _sprite.AddRsiLayer(sprite, state, spritePath.Value);
+        }
+
+        private void SetAdditionalCornerLayerStates(
+            Entity<SpriteComponent> spriteEnt,
+            IconSmoothComponent smooth,
+            CornerFill cornerNE,
+            CornerFill cornerNW,
+            CornerFill cornerSW,
+            CornerFill cornerSE)
+        {
+            foreach (var (key, layer) in smooth.AdditionalCornerLayers)
+            {
+                _sprite.LayerSetRsiState(
+                    spriteEnt.AsNullable(),
+                    AdditionalCornerLayerKey(key, CornerLayers.NE),
+                    $"{layer.StateBase}{(int)cornerNE}");
+                _sprite.LayerSetRsiState(
+                    spriteEnt.AsNullable(),
+                    AdditionalCornerLayerKey(key, CornerLayers.SE),
+                    $"{layer.StateBase}{(int)cornerSE}");
+                _sprite.LayerSetRsiState(
+                    spriteEnt.AsNullable(),
+                    AdditionalCornerLayerKey(key, CornerLayers.SW),
+                    $"{layer.StateBase}{(int)cornerSW}");
+                _sprite.LayerSetRsiState(
+                    spriteEnt.AsNullable(),
+                    AdditionalCornerLayerKey(key, CornerLayers.NW),
+                    $"{layer.StateBase}{(int)cornerNW}");
+            }
+        }
+
+        private static string AdditionalCornerLayerKey(string key, CornerLayers corner)
+        {
+            return $"{key}-{corner}";
+        }
+        // DS14-end
 
         private void OnShutdown(EntityUid uid, IconSmoothComponent component, ComponentShutdown args)
         {
@@ -404,6 +479,7 @@ namespace Content.Client.IconSmoothing
             _sprite.LayerSetRsiState(spriteEnt.AsNullable(), CornerLayers.SE, $"{smooth.StateBase}{(int)cornerSE}");
             _sprite.LayerSetRsiState(spriteEnt.AsNullable(), CornerLayers.SW, $"{smooth.StateBase}{(int)cornerSW}");
             _sprite.LayerSetRsiState(spriteEnt.AsNullable(), CornerLayers.NW, $"{smooth.StateBase}{(int)cornerNW}");
+            SetAdditionalCornerLayerStates(spriteEnt, smooth, cornerNE, cornerNW, cornerSW, cornerSE); // DS14
 
             var directions = DirectionFlag.None;
 

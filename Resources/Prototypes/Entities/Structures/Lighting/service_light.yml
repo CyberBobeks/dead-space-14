@@ -6,7 +6,7 @@
   components:
   - type: Sprite
     sprite: Structures/Wallmounts/service_light.rsi
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
     layers:
     - map: ["enum.PoweredLightLayers.Base"]
       state: base

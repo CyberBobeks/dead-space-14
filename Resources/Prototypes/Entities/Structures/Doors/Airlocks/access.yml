@@ -4,6 +4,50 @@
   id: AirlockServiceLocked
   suffix: Service, Locked
   components:
+# DS14-start
+  - type: Sprite
+    sprite: Structures/Doors/Airlocks/Standard/service.rsi
+    snapCardinals: false
+    offset: "0, 0.75"
+    layers:
+    - state: closed
+      map: ["enum.DoorVisualLayers.Base"]
+    - state: closed_unlit
+      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
+      shader: unshaded
+      map: ["enum.DoorVisualLayers.BaseUnlit"]
+      visible: false
+    - state: welded
+      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
+      map: ["enum.WeldableLayers.BaseWelded"]
+    - state: bolted_closed_unlit
+      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
+      shader: unshaded
+      map: ["enum.DoorVisualLayers.BaseBolted"]
+    - state: emergency_unlit
+      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
+      map: ["enum.DoorVisualLayers.BaseEmergencyAccess"]
+      shader: unshaded
+    - state: panel_open
+      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
+      map: ["enum.WiresVisualLayers.MaintenancePanel"]
+      visible: false
+    - state: electrified_ai
+      sprite: Interface/Misc/ai_hud.rsi
+      shader: unshaded
+      visible: false
+      map: ["enum.ElectrifiedLayers.HUD"]
+    - state: electrified
+      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
+      shader: unshaded
+      visible: false
+      map: ["enum.ElectrifiedLayers.Sparks"]
+    - state: sparks
+      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
+      map: ["enum.DoorVisualLayers.BaseEmagging"]
+      shader: unshaded
+      visible: false
+# DS14-end
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsService ]
@@ -939,6 +983,42 @@
   components:
   - type: Sprite
     sprite: Structures/Doors/Airlocks/Standard/maint.rsi
+# DS14-start
+    snapCardinals: true
+    offset: "0, 0"
+    layers: &DS14MaintAirlockLayers
+    - state: closed
+      map: ["enum.DoorVisualLayers.Base"]
+    - state: closed_unlit
+      shader: unshaded
+      map: ["enum.DoorVisualLayers.BaseUnlit"]
+      visible: false
+    - state: welded
+      map: ["enum.WeldableLayers.BaseWelded"]
+    - state: bolted_unlit
+      shader: unshaded
+      map: ["enum.DoorVisualLayers.BaseBolted"]
+    - state: emergency_unlit
+      map: ["enum.DoorVisualLayers.BaseEmergencyAccess"]
+      shader: unshaded
+    - state: panel_open
+      map: ["enum.WiresVisualLayers.MaintenancePanel"]
+      visible: false
+    - state: electrified_ai
+      sprite: Interface/Misc/ai_hud.rsi
+      shader: unshaded
+      visible: false
+      map: ["enum.ElectrifiedLayers.HUD"]
+    - state: electrified
+      sprite: Effects/electricity.rsi
+      shader: unshaded
+      visible: false
+      map: ["enum.ElectrifiedLayers.Sparks"]
+    - state: sparks
+      map: ["enum.DoorVisualLayers.BaseEmagging"]
+      shader: unshaded
+      visible: false
+# DS14-end
 
 - type: entity
   parent: AirlockBarKitchenLocked
@@ -946,6 +1026,11 @@
   components:
   - type: Sprite
     sprite: Structures/Doors/Airlocks/Standard/maint.rsi
+# DS14-start
+    snapCardinals: true
+    offset: "0, 0"
+    layers: *DS14MaintAirlockLayers
+# DS14-end
 
 - type: entity
   parent: AirlockChapelLocked
@@ -953,6 +1038,11 @@
   components:
   - type: Sprite
     sprite: Structures/Doors/Airlocks/Standard/maint.rsi
+# DS14-start
+    snapCardinals: true
+    offset: "0, 0"
+    layers: *DS14MaintAirlockLayers
+# DS14-end
 
 - type: entity
   parent: AirlockHydroponicsLocked
@@ -967,6 +1057,11 @@
   components:
   - type: Sprite
     sprite: Structures/Doors/Airlocks/Standard/maint.rsi
+# DS14-start
+    snapCardinals: true
+    offset: "0, 0"
+    layers: *DS14MaintAirlockLayers
+# DS14-end
 
 - type: entity
   parent: AirlockLawyerLocked
@@ -981,6 +1076,11 @@
   components:
   - type: Sprite
     sprite: Structures/Doors/Airlocks/Standard/maint.rsi
+# DS14-start
+    snapCardinals: true
+    offset: "0, 0"
+    layers: *DS14MaintAirlockLayers
+# DS14-end
 
 - type: entity
   parent: AirlockTheatreLocked
@@ -988,6 +1088,11 @@
   components:
   - type: Sprite
     sprite: Structures/Doors/Airlocks/Standard/maint.rsi
+# DS14-start
+    snapCardinals: true
+    offset: "0, 0"
+    layers: *DS14MaintAirlockLayers
+# DS14-end
 
 - type: entity
   parent: AirlockServiceTheatreLocked
@@ -995,6 +1100,11 @@
   components:
   - type: Sprite
     sprite: Structures/Doors/Airlocks/Standard/maint.rsi
+# DS14-start
+    snapCardinals: true
+    offset: "0, 0"
+    layers: *DS14MaintAirlockLayers
+# DS14-end
 
 - type: entity
   parent: AirlockKitchenLocked
@@ -1002,6 +1112,11 @@
   components:
   - type: Sprite
     sprite: Structures/Doors/Airlocks/Standard/maint.rsi
+# DS14-start
+    snapCardinals: true
+    offset: "0, 0"
+    layers: *DS14MaintAirlockLayers
+# DS14-end
 
 - type: entity
   parent: AirlockFreezerKitchenHydroLocked

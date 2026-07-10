@@ -5,12 +5,6 @@
   parent: PlastitaniumWindowIndestructible
   suffix: Неразрушимое
   components:
-  - type: Sprite
-    drawdepth: WallTops
-    sprite: _DeadSpace/Structures/Windows/plastitanium_plasma_window.rsi
-  - type: Icon
-    sprite: _DeadSpace/Structures/Windows/plastitanium_plasma_window.rsi
-    state: full
   - type: RadiationBlocker
     resistance: 2
 
@@ -45,12 +39,6 @@
             max: 2
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
-  - type: Sprite
-    drawdepth: WallTops
-    sprite: _DeadSpace/Structures/Windows/plastitanium_plasma_window.rsi
-  - type: Icon
-    sprite: _DeadSpace/Structures/Windows/plastitanium_plasma_window.rsi
-    state: full
   - type: RadiationBlocker
     resistance: 2
   - type: Construction

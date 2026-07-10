@@ -3,11 +3,6 @@
   name: reinforced plasma window
   parent: [BaseDeltaPressureReinforcedPlasma, WindowRCDResistant]
   components:
-  - type: Sprite
-    drawdepth: WallTops
-    sprite: Structures/Windows/reinforced_plasma_window.rsi
-  - type: Icon
-    sprite: Structures/Windows/reinforced_plasma_window.rsi
   - type: Damageable
     damageContainer: StructuralInorganic
     damageModifierSet: RGlass
@@ -41,8 +36,6 @@
             max: 2
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
-  - type: IconSmooth
-    base: rpwindow
   - type: Construction
     graph: Window
     node: reinforcedPlasmaWindow
@@ -133,7 +126,7 @@
     - Window
   - type: IconSmooth
     mode: Diagonal
-    key: walls  # Corvax-Resprite
+    key: windows-reinforced-plasma-diagonal # DS14
     base: state
   - type: Icon
     sprite: Structures/Windows/reinforced_plasma_diagonal.rsi

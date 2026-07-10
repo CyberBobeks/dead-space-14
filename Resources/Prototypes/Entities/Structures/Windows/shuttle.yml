@@ -3,11 +3,6 @@
   name: shuttle window
   parent: [BaseDeltaPressureReinforcedGlass, WindowRCDResistant]
   components:
-  - type: Sprite
-    drawdepth: WallTops
-    sprite: Structures/Windows/shuttle_window.rsi
-  - type: Icon
-    sprite: Structures/Windows/shuttle_window.rsi
   - type: Repairable
     fuelCost: 15
     doAfterDelay: 3
@@ -39,8 +34,6 @@
             max: 2
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
-  - type: IconSmooth
-    base: swindow
   - type: Construction
     graph: Window
     node: shuttleWindow
@@ -73,7 +66,7 @@
     - Window
   - type: IconSmooth
     mode: Diagonal
-    key: walls  # Corvax-Resprite
+    key: windows-shuttle-diagonal # DS14
     base: state
   - type: Icon
     sprite: Structures/Windows/shuttle_window_diagonal.rsi

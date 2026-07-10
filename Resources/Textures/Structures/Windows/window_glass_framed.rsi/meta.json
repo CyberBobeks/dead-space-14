@@ -1,0 +1,43 @@
+{
+    "version": 1,
+    "size": {
+        "x": 32,
+        "y": 64
+    },
+    "license": "CC-BY-SA-4.0",
+    "copyright": "By TheGypsyBaron",
+    "states": [
+        {
+            "name": "windowframe0",
+            "directions": 4
+        },
+        {
+            "name": "windowframe1",
+            "directions": 4
+        },
+        {
+            "name": "windowframe2",
+            "directions": 4
+        },
+        {
+            "name": "windowframe3",
+            "directions": 4
+        },
+        {
+            "name": "windowframe4",
+            "directions": 4
+        },
+        {
+            "name": "windowframe5",
+            "directions": 4
+        },
+        {
+            "name": "windowframe6",
+            "directions": 4
+        },
+        {
+            "name": "windowframe7",
+            "directions": 4
+        }
+    ]
+}

@@ -4,11 +4,6 @@
   name: resin window
   description: Transparent and hardened, yet slightly sticky to the touch. Slightly stronger than a normal reinforced window.
   components:
-  - type: Sprite
-    drawdepth: WallTops
-    sprite: Structures/Windows/xeno_resin.rsi
-  - type: Icon
-    sprite: Structures/Windows/xeno_resin.rsi
   - type: Destructible
     thresholds:
     - trigger:
@@ -34,8 +29,6 @@
             max: 2
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
-  - type: IconSmooth
-    base: xwindow
   - type: DamageVisuals
     thresholds: [5, 10, 20]
     damageDivisor: 4

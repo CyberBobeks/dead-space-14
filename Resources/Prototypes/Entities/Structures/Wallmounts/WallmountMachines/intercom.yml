@@ -38,7 +38,7 @@
       key_slots: !type:Container
   - type: Sprite
     noRot: false
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: _DeadSpace/Structures/Wallmounts/intercom.rsi # DS14-resprite
     layers:
     - state: base
@@ -121,7 +121,7 @@
   description: An intercom. It doesn't seem very helpful right now.
   components:
   - type: Sprite
-    drawdepth: SmallObjects
+    drawdepth: OverMobs # DS14
     sprite: _DeadSpace/Structures/Wallmounts/intercom.rsi # DS14-resprite
     layers:
     - state: build

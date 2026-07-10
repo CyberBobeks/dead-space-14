@@ -10,7 +10,7 @@
     timerOffset: 0,-4
     rows: 2
   - type: Sprite
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
     sprite: Structures/Wallmounts/screen.rsi
     state: screen
     noRot: true

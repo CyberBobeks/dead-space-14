@@ -129,7 +129,7 @@
   - type: StaticPrice
     price: 75
   - type: Sprite
-    drawdepth: WallMountedItems
+    drawdepth: OverMobs # DS14
     noRot: false
     sprite: Structures/Storage/wall_locker.rsi
     layers:

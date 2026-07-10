@@ -62,6 +62,7 @@
   id: BaseWall
   components:
   - type: Occluder # Breaks on diagonal walls
+  - type: WallProximityFade # DS14
 
 - type: entity
   abstract: true
@@ -75,8 +76,9 @@
     - Diagonal
   - type: IconSmooth
     mode: Diagonal
-    key: walls
+    key: walls-diagonal # DS14
     base: state
+  - type: WallProximityFade # DS14
   - type: Airtight
     noAirWhenFullyAirBlocked: false
     airBlockedDirection:
@@ -123,7 +125,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-brick # DS14
     base: brick
 
 - type: entity
@@ -152,7 +154,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-clock # DS14
     base: clock
 
 - type: entity
@@ -185,7 +187,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-clown # DS14
     base: clown
   - type: Fixtures
     fixtures:
@@ -230,7 +232,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-meat # DS14
     base: meat
 
 - type: entity
@@ -256,7 +258,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-cult # DS14
     base: cult
 
 - type: entity
@@ -286,7 +288,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-debug # DS14
     base: debug
 
 - type: entity
@@ -316,7 +318,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-diamond # DS14
     base: diamond
 
 - type: entity
@@ -369,7 +371,7 @@
         - WallLayer
         density: 4000
   - type: IconSmooth
-    key: walls
+    key: walls-gold # DS14
     base: gold
 
 - type: entity
@@ -395,7 +397,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-ice # DS14
     base: ice
 
 - type: entity
@@ -437,7 +439,7 @@
       - !type:DoActsBehavior
         acts: ["Destruction"]
   - type: IconSmooth
-    key: walls
+    key: walls-plasma # DS14
     base: plasma
   - type: RadiationBlocker
     resistance: 5
@@ -481,7 +483,7 @@
       - !type:DoActsBehavior
         acts: ["Destruction"]
   - type: IconSmooth
-    key: walls
+    key: walls-plastic # DS14
     base: plastic
 
 - type: entity
@@ -495,7 +497,7 @@
     - type: Icon
       sprite: Structures/Walls/plastitanium.rsi
     - type: IconSmooth
-      key: walls
+      key: walls-plastitanium # DS14
       base: plastitanium
     - type: Fixtures
       fixtures:
@@ -554,6 +556,12 @@
   - type: Icon
     sprite: Structures/Walls/plastitanium_diagonal.rsi
     state: state0
+# DS14-start
+  - type: IconSmooth
+    mode: Diagonal
+    key: walls-plastitanium-diagonal
+    base: state
+# DS14-end
   - type: Damageable
     damageContainer: StructuralInorganic
     damageModifierSet: StructuralMetallicStrong
@@ -603,10 +611,16 @@
   name: reinforced wall
   components:
   - type: Sprite
-    sprite: Structures/Walls/solid.rsi
+# DS14-start
+    drawdepth: Mobs
+    sprite: Structures/Walls/metal_reinforced.rsi
+    offset: "0, 0"
+# DS14-end
   - type: Icon
-    sprite: Structures/Walls/solid.rsi
-    state: rgeneric
+# DS14-start
+    sprite: Structures/Walls/metal_reinforced.rsi
+    state: full
+# DS14-end
   - type: Construction
     graph: Girder
     node: reinforcedWall
@@ -636,20 +650,24 @@
       - !type:DoActsBehavior
         acts: ["Destruction"]
   - type: IconSmooth
-    key: walls
-    base: reinf_over
+# DS14-start
+    key: walls-metal-reinforced
+    base: wall
+# DS14-end
   - type: Appearance
   - type: GenericVisualizer
     visuals:
       enum.ReinforcedWallVisuals.DeconstructionStage:
         ReinforcedWallVisualLayers.Deconstruction:
           -1: { visible: false }
-          0: { state: reinf_construct-0, visible: true}
-          1: { state: reinf_construct-1, visible: true}
-          2: { state: reinf_construct-2, visible: true}
-          3: { state: reinf_construct-3, visible: true}
-          4: { state: reinf_construct-4, visible: true}
-          5: { state: reinf_construct-5, visible: true}
+# DS14-start
+          0: { sprite: Structures/Walls/solid.rsi, state: reinf_construct-0, visible: true}
+          1: { sprite: Structures/Walls/solid.rsi, state: reinf_construct-1, visible: true}
+          2: { sprite: Structures/Walls/solid.rsi, state: reinf_construct-2, visible: true}
+          3: { sprite: Structures/Walls/solid.rsi, state: reinf_construct-3, visible: true}
+          4: { sprite: Structures/Walls/solid.rsi, state: reinf_construct-4, visible: true}
+          5: { sprite: Structures/Walls/solid.rsi, state: reinf_construct-5, visible: true}
+# DS14-end
   - type: ReinforcedWallReplacementMarker
   - type: StaticPrice
     price: 250
@@ -682,7 +700,7 @@
     graph: Girder
     node: reinforcedWallRust
   - type: IconSmooth
-    key: walls
+    key: walls-metal-reinforced-rust # DS14
     base: reinf_over
 
 - type: entity
@@ -697,6 +715,12 @@
   - type: Icon
     sprite: Structures/Walls/reinforced_diagonal.rsi
     state: state0
+# DS14-start
+  - type: IconSmooth
+    mode: Diagonal
+    key: walls-reinforced-diagonal
+    base: state
+# DS14-end
   - type: Damageable
     damageContainer: StructuralInorganic
     damageModifierSet: StructuralMetallicStrong
@@ -752,7 +776,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-riveted # DS14
     base: riveted
   - type: StaticPrice
     price: 150
@@ -784,7 +808,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-sandstone # DS14
     base: sandstone
 
 - type: entity
@@ -826,7 +850,7 @@
       - !type:DoActsBehavior
         acts: ["Destruction"]
   - type: IconSmooth
-    key: walls
+    key: walls-silver # DS14
     base: silver
 
 #shuttle walls
@@ -842,6 +866,12 @@
   - type: Icon
     sprite: Structures/Walls/shuttle_diagonal.rsi
     state: state0
+# DS14-start
+  - type: IconSmooth
+    mode: Diagonal
+    key: walls-shuttle-diagonal
+    base: state
+# DS14-end
   - type: Reflect
     reflectProb: 0.25
   - type: Pullable
@@ -940,7 +970,7 @@
     graph: Girder
     node: shuttleWall
   - type: IconSmooth
-    key: walls
+    key: walls-shuttle # DS14
     base: state
   - type: Appearance
   - type: GenericVisualizer
@@ -974,13 +1004,17 @@
   name: solid wall
   components:
   - type: Sprite
-    sprite: Structures/Walls/solid.rsi
+# DS14-start
+    drawdepth: Mobs
+    sprite: Structures/Walls/metal.rsi
+    offset: "0, 0"
+# DS14-end
   - type: WallReplacementMarker
   - type: Construction
     graph: Girder
     node: wall
   - type: Icon
-    sprite: Structures/Walls/solid.rsi
+    sprite: Structures/Walls/metal.rsi # DS14
   - type: RCDDeconstructable
     cost: 6
     delay: 8
@@ -1008,8 +1042,10 @@
       - !type:DoActsBehavior
         acts: ["Destruction"]
   - type: IconSmooth
-    key: walls
-    base: solid
+# DS14-start
+    key: walls-metal
+    base: wall
+# DS14-end
 
 - type: entity
   parent: WallDiagonalBase
@@ -1017,12 +1053,23 @@
   name: solid wall
   components:
   - type: Sprite
-    drawdepth: Walls
-    sprite: Structures/Walls/solid_diagonal.rsi
-    state: state0
+# DS14-start
+    drawdepth: Mobs
+    sprite: Structures/Walls/diagonal.rsi
+    state: metal0
+    offset: "0, 0"
+# DS14-end
   - type: Icon
-    sprite: Structures/Walls/solid_diagonal.rsi
-    state: state0
+# DS14-start
+    sprite: Structures/Walls/diagonal.rsi
+    state: metal0
+# DS14-end
+# DS14-start
+  - type: IconSmooth
+    mode: Diagonal
+    key: walls-metal-diagonal
+    base: metal
+# DS14-end
   - type: Destructible
     thresholds:
     - trigger:
@@ -1061,7 +1108,7 @@
     graph: Girder
     node: wallrust
   - type: IconSmooth
-    key: walls
+    key: walls-metal-rust # DS14
     base: solid
   - type: Destructible
     thresholds:
@@ -1199,7 +1246,7 @@
   - type: Icon
     sprite: Structures/Walls/xenoborg.rsi
   - type: IconSmooth
-    key: walls
+    key: walls-xenoborg # DS14
     base: xenoborg
 
 - type: entity
@@ -1215,6 +1262,12 @@
   - type: Icon
     sprite: Structures/Walls/xenoborg_diagonal.rsi
     state: state0
+# DS14-start
+  - type: IconSmooth
+    mode: Diagonal
+    key: walls-xenoborg-diagonal
+    base: state
+# DS14-end
 
 - type: entity
   parent: BaseWall
@@ -1262,7 +1315,7 @@
         - WallLayer
         density: 6000
   - type: IconSmooth
-    key: walls
+    key: walls-uranium # DS14
     base: uranium
   - type: RadiationBlocker
     resistance: 6
@@ -1376,7 +1429,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-necropolis # DS14
     base: necropolis
 
 - type: entity
@@ -1397,7 +1450,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: IconSmooth
-    key: walls
+    key: walls-mining # DS14
     base: mining
   - type: RandomIconSmooth
     randomStates:
@@ -1422,6 +1475,12 @@
   - type: Icon
     sprite: Structures/Walls/mining_diagonal.rsi
     state: state0
+# DS14-start
+  - type: IconSmooth
+    mode: Diagonal
+    key: walls-mining-diagonal
+    base: state
+# DS14-end
   - type: Construction # DS14
     graph: Girder
     node: diagonalMiningWall

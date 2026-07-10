@@ -23,11 +23,21 @@
       - ForceFixRotations
       - Window
   - type: Sprite
-    drawdepth: WallTops
-    sprite: Structures/Windows/window.rsi
+# DS14-start
+    drawdepth: Mobs
+    sprite: Structures/Windows/window_glass.rsi
+    offset: "0, 0"
+    noRot: true
+    layers:
+    - sprite: Structures/Windows/window_glass.rsi
+      state: full
+      visible: false
+# DS14-end
   - type: Icon
-    sprite: Structures/Windows/window.rsi
+# DS14-start
+    sprite: Structures/Windows/window_glass.rsi
     state: full
+# DS14-end
   - type: Physics
     bodyType: Static
   - type: Fixtures
@@ -76,8 +86,14 @@
         acts: [ "Destruction" ]
   - type: Airtight
   - type: IconSmooth
-    key: walls  # Corvax-Resprite
+    key: windows-glass # DS14
     base: window
+# DS14-start
+    additionalCornerLayers:
+      window-frame:
+        sprite: Structures/Windows/window_glass_framed.rsi
+        base: windowframe
+# DS14-end
   - type: InteractionPopup
     interactSuccessString: comp-window-knock
     messagePerceivedByOthers: comp-window-knock
@@ -102,13 +118,6 @@
   id: TintedWindow
   name: tinted window
   components:
-  - type: Sprite
-    drawdepth: WallTops
-    sprite: Structures/Windows/tinted_window.rsi
-  - type: Icon
-    sprite: Structures/Windows/tinted_window.rsi
-  - type: IconSmooth
-    base: twindow
   - type: Construction
     graph: Window
     node: tintedWindow
@@ -264,7 +273,7 @@
     - Window
   - type: IconSmooth
     mode: Diagonal
-    key: walls  # Corvax-Resprite
+    key: windows-glass-diagonal # DS14
     base: state
   - type: Icon
     sprite: Structures/Windows/window_diagonal.rsi
