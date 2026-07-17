@@ -44,8 +44,9 @@
   - type: StaticPrice
     price: 100
   - type: Construction # DS14
-    graph: Windows
+    graph: Window
     node: miningWindow
+    deconstructionTarget: frame
 
 - type: entity
   parent: ShuttleWindow

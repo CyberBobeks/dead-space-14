@@ -79,6 +79,7 @@
     key: walls-diagonal # DS14
     base: state
   - type: WallProximityFade # DS14
+    useLocalRotation: true
   - type: Airtight
     noAirWhenFullyAirBlocked: false
     airBlockedDirection:
@@ -613,12 +614,12 @@
   - type: Sprite
 # DS14-start
     drawdepth: Mobs
-    sprite: Structures/Walls/metal_reinforced.rsi
+    sprite: _DeadSpace/Structures/Walls/metal_reinforced.rsi
     offset: "0, 0"
 # DS14-end
   - type: Icon
 # DS14-start
-    sprite: Structures/Walls/metal_reinforced.rsi
+    sprite: _DeadSpace/Structures/Walls/metal_reinforced.rsi
     state: full
 # DS14-end
   - type: Construction
@@ -1006,7 +1007,7 @@
   - type: Sprite
 # DS14-start
     drawdepth: Mobs
-    sprite: Structures/Walls/metal.rsi
+    sprite: _DeadSpace/Structures/Walls/metal.rsi
     offset: "0, 0"
 # DS14-end
   - type: WallReplacementMarker
@@ -1014,7 +1015,7 @@
     graph: Girder
     node: wall
   - type: Icon
-    sprite: Structures/Walls/metal.rsi # DS14
+    sprite: _DeadSpace/Structures/Walls/metal.rsi # DS14
   - type: RCDDeconstructable
     cost: 6
     delay: 8
@@ -1055,13 +1056,13 @@
   - type: Sprite
 # DS14-start
     drawdepth: Mobs
-    sprite: Structures/Walls/diagonal.rsi
+    sprite: _DeadSpace/Structures/Walls/diagonal.rsi
     state: metal0
     offset: "0, 0"
 # DS14-end
   - type: Icon
 # DS14-start
-    sprite: Structures/Walls/diagonal.rsi
+    sprite: _DeadSpace/Structures/Walls/diagonal.rsi
     state: metal0
 # DS14-end
 # DS14-start

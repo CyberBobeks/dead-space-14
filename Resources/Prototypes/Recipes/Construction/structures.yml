@@ -270,11 +270,30 @@
   objectType: Structure
   placementMode: SnapgridCenter
 
+# DS14-start
+- type: construction
+  id: WindowFrame
+  name: construction-recipe-window-frame
+  description: construction-recipe-window-frame-desc
+  graph: Window
+  startNode: start
+  targetNode: frame
+  category: construction-category-structures
+  canBuildInImpassable: true
+  conditions:
+    - !type:EmptyOrWindowValidInTile
+    - !type:NoWindowsInTile
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: false
+# DS14-end
+
 - type: construction
   id: Window
   graph: Window
-  startNode: start
+  startNode: frame # DS14
   targetNode: window
+  hide: true # DS14
   category: construction-category-structures
   canBuildInImpassable: true
   conditions:
@@ -301,8 +320,9 @@
 - type: construction
   id: ReinforcedWindow
   graph: Window
-  startNode: start
+  startNode: frame # DS14
   targetNode: reinforcedWindow
+  hide: true # DS14
   category: construction-category-structures
   canBuildInImpassable: true
   conditions:
@@ -329,8 +349,9 @@
 - type: construction
   id: TintedWindow
   graph: Window
-  startNode: start
+  startNode: frame # DS14
   targetNode: tintedWindow
+  hide: true # DS14
   category: construction-category-structures
   canBuildInImpassable: true
   conditions:
@@ -343,8 +364,9 @@
 - type: construction
   id: ClockworkWindow
   graph: Window
-  startNode: start
+  startNode: frame # DS14
   targetNode: clockworkWindow
+  hide: true # DS14
   category: construction-category-structures
   canBuildInImpassable: true
   conditions:
@@ -371,8 +393,9 @@
 - type: construction
   id: PlasmaWindow
   graph: Window
-  startNode: start
+  startNode: frame # DS14
   targetNode: plasmaWindow
+  hide: true # DS14
   category: construction-category-structures
   canBuildInImpassable: true
   conditions:
@@ -385,8 +408,9 @@
 - type: construction
   id: ReinforcedPlasmaWindow
   graph: Window
-  startNode: start
+  startNode: frame # DS14
   targetNode: reinforcedPlasmaWindow
+  hide: true # DS14
   category: construction-category-structures
   canBuildInImpassable: true
   conditions:
@@ -399,8 +423,9 @@
 - type: construction
   id: ShuttleWindow
   graph: Window
-  startNode: start
+  startNode: frame # DS14
   targetNode: shuttleWindow
+  hide: true # DS14
   category: construction-category-structures
   canBuildInImpassable: true
   conditions:
@@ -506,8 +531,9 @@
 - type: construction
   id: UraniumWindow
   graph: Window
-  startNode: start
+  startNode: frame # DS14
   targetNode: uraniumWindow
+  hide: true # DS14
   category: construction-category-structures
   canBuildInImpassable: true
   conditions:
@@ -520,8 +546,9 @@
 - type: construction
   id: ReinforcedUraniumWindow
   graph: Window
-  startNode: start
+  startNode: frame # DS14
   targetNode: reinforcedUraniumWindow
+  hide: true # DS14
   category: construction-category-structures
   canBuildInImpassable: true
   conditions:

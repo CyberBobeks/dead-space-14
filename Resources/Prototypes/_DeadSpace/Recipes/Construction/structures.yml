@@ -33,9 +33,10 @@
 
 - type: construction
   id: PlastitaniumPlasmaWindow
-  graph: PlastitaniumWindow
-  startNode: start
+  graph: Window
+  startNode: frame
   targetNode: plastitaniumplasmaWindow
+  hide: true
   category: construction-category-structures
   canBuildInImpassable: true
   entityWhitelist:
@@ -50,9 +51,10 @@
 
 - type: construction
   id: PlastitaniumWindow
-  graph: PlastitaniumWindow
-  startNode: start
+  graph: Window
+  startNode: frame
   targetNode: plastitaniumWindow
+  hide: true
   category: construction-category-structures
   canBuildInImpassable: true
   entityWhitelist:

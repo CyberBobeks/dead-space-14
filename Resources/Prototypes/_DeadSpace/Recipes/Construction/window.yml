@@ -1,8 +1,9 @@
 - type: construction
   id: MiningWindow
-  graph: Windows
-  startNode: start
+  graph: Window
+  startNode: frame
   targetNode: miningWindow
+  hide: true
   category: construction-category-structures
   canBuildInImpassable: true
   conditions:

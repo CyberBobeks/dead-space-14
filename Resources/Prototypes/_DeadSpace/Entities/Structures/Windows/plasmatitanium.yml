@@ -42,8 +42,9 @@
   - type: RadiationBlocker
     resistance: 2
   - type: Construction
-    graph: PlastitaniumWindow
+    graph: Window
     node: plastitaniumplasmaWindow
+    deconstructionTarget: frame
   - type: Repairable
 
 - type: entity

@@ -71,6 +71,35 @@ namespace Content.Client.IconSmoothing
 
         [DataField]
         public ResPath? Sprite;
+
+        internal int SouthEastLayer = -1;
+        internal int NorthEastLayer = -1;
+        internal int NorthWestLayer = -1;
+        internal int SouthWestLayer = -1;
+
+        private string? _cachedStateBase;
+        private RSI.StateId[]? _cachedStates;
+
+        internal RSI.StateId GetState(int cornerFill)
+        {
+            if (_cachedStates == null || _cachedStateBase != StateBase)
+            {
+                _cachedStateBase = StateBase;
+                _cachedStates =
+                [
+                    $"{StateBase}0",
+                    $"{StateBase}1",
+                    $"{StateBase}2",
+                    $"{StateBase}3",
+                    $"{StateBase}4",
+                    $"{StateBase}5",
+                    $"{StateBase}6",
+                    $"{StateBase}7",
+                ];
+            }
+
+            return _cachedStates[cornerFill];
+        }
     }
     // DS14-end
 

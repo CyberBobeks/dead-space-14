@@ -98,7 +98,15 @@ namespace Content.Server.Construction
 
             // When we handle a node, we're essentially testing the current event interaction against all of this node's
             // edges' first steps. If any of them accepts the interaction, we stop iterating and enter that edge.
-            for (var i = 0; i < node.Edges.Count; i++)
+            // DS14-start
+            var firstEdge = construction.TargetEdgeIndex ?? 0;
+            var lastEdge = construction.TargetEdgeIndex is null ? node.Edges.Count : firstEdge + 1;
+
+            if (firstEdge < 0 || firstEdge >= node.Edges.Count)
+                return HandleResult.False;
+
+            for (var i = firstEdge; i < lastEdge; i++)
+            // DS14-end
             {
                 var edge = node.Edges[i];
                 if (HandleEdge(uid, ev, edge, validation, construction) is var result and not HandleResult.False)

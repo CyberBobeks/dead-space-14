@@ -2,6 +2,7 @@ using System.Numerics;
 using Content.Shared.IconSmoothing;
 using JetBrains.Annotations;
 using Robust.Client.GameObjects;
+using Robust.Client.Graphics;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Map.Enumerators;
@@ -20,8 +21,17 @@ namespace Content.Client.IconSmoothing
         [Dependency] private readonly SharedMapSystem _mapSystem = default!;
         [Dependency] private readonly SpriteSystem _sprite = default!;
 
+        // DS14-start
+        private const int MaxQueueWorkPerFrame = 256;
+        private const int MaxAnchorChangesPerFrame = MaxQueueWorkPerFrame / 2;
+        // DS14-end
+
         private readonly Queue<EntityUid> _dirtyEntities = new();
         private readonly Queue<EntityUid> _anchorChangedEntities = new();
+        // DS14-start
+        private readonly HashSet<EntityUid> _queuedDirtyEntities = new();
+        private readonly HashSet<EntityUid> _queuedAnchorChangedEntities = new();
+        // DS14-end
 
         private int _generation;
 
@@ -104,32 +114,40 @@ namespace Content.Client.IconSmoothing
         {
             foreach (var (key, layer) in component.AdditionalCornerLayers)
             {
-                _sprite.LayerMapRemove(sprite, AdditionalCornerLayerKey(key, CornerLayers.SE));
-                _sprite.LayerMapRemove(sprite, AdditionalCornerLayerKey(key, CornerLayers.NE));
-                _sprite.LayerMapRemove(sprite, AdditionalCornerLayerKey(key, CornerLayers.NW));
-                _sprite.LayerMapRemove(sprite, AdditionalCornerLayerKey(key, CornerLayers.SW));
+                var southEastKey = AdditionalCornerLayerKey(key, CornerLayers.SE);
+                var northEastKey = AdditionalCornerLayerKey(key, CornerLayers.NE);
+                var northWestKey = AdditionalCornerLayerKey(key, CornerLayers.NW);
+                var southWestKey = AdditionalCornerLayerKey(key, CornerLayers.SW);
 
-                var state0 = $"{layer.StateBase}0";
+                _sprite.LayerMapRemove(sprite, southEastKey);
+                _sprite.LayerMapRemove(sprite, northEastKey);
+                _sprite.LayerMapRemove(sprite, northWestKey);
+                _sprite.LayerMapRemove(sprite, southWestKey);
 
-                var se = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
-                _sprite.LayerMapSet(sprite, AdditionalCornerLayerKey(key, CornerLayers.SE), se);
-                _sprite.LayerSetDirOffset(sprite, se, DirectionOffset.None);
+                var state0 = layer.GetState(0);
 
-                var ne = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
-                _sprite.LayerMapSet(sprite, AdditionalCornerLayerKey(key, CornerLayers.NE), ne);
-                _sprite.LayerSetDirOffset(sprite, ne, DirectionOffset.CounterClockwise);
+                layer.SouthEastLayer = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
+                _sprite.LayerMapSet(sprite, southEastKey, layer.SouthEastLayer);
+                _sprite.LayerSetDirOffset(sprite, layer.SouthEastLayer, DirectionOffset.None);
 
-                var nw = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
-                _sprite.LayerMapSet(sprite, AdditionalCornerLayerKey(key, CornerLayers.NW), nw);
-                _sprite.LayerSetDirOffset(sprite, nw, DirectionOffset.Flip);
+                layer.NorthEastLayer = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
+                _sprite.LayerMapSet(sprite, northEastKey, layer.NorthEastLayer);
+                _sprite.LayerSetDirOffset(sprite, layer.NorthEastLayer, DirectionOffset.CounterClockwise);
 
-                var sw = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
-                _sprite.LayerMapSet(sprite, AdditionalCornerLayerKey(key, CornerLayers.SW), sw);
-                _sprite.LayerSetDirOffset(sprite, sw, DirectionOffset.Clockwise);
+                layer.NorthWestLayer = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
+                _sprite.LayerMapSet(sprite, northWestKey, layer.NorthWestLayer);
+                _sprite.LayerSetDirOffset(sprite, layer.NorthWestLayer, DirectionOffset.Flip);
+
+                layer.SouthWestLayer = AddAdditionalCornerLayer(sprite, layer.Sprite, state0);
+                _sprite.LayerMapSet(sprite, southWestKey, layer.SouthWestLayer);
+                _sprite.LayerSetDirOffset(sprite, layer.SouthWestLayer, DirectionOffset.Clockwise);
             }
         }
 
-        private int AddAdditionalCornerLayer(Entity<SpriteComponent?> sprite, ResPath? spritePath, string state)
+        private int AddAdditionalCornerLayer(
+            Entity<SpriteComponent?> sprite,
+            ResPath? spritePath,
+            RSI.StateId state)
         {
             return spritePath == null
                 ? _sprite.AddRsiLayer(sprite, state)
@@ -144,24 +162,32 @@ namespace Content.Client.IconSmoothing
             CornerFill cornerSW,
             CornerFill cornerSE)
         {
-            foreach (var (key, layer) in smooth.AdditionalCornerLayers)
+            foreach (var layer in smooth.AdditionalCornerLayers.Values)
             {
+                if (layer.NorthEastLayer < 0 ||
+                    layer.SouthEastLayer < 0 ||
+                    layer.SouthWestLayer < 0 ||
+                    layer.NorthWestLayer < 0)
+                {
+                    continue;
+                }
+
                 _sprite.LayerSetRsiState(
                     spriteEnt.AsNullable(),
-                    AdditionalCornerLayerKey(key, CornerLayers.NE),
-                    $"{layer.StateBase}{(int)cornerNE}");
+                    layer.NorthEastLayer,
+                    layer.GetState((int) cornerNE));
                 _sprite.LayerSetRsiState(
                     spriteEnt.AsNullable(),
-                    AdditionalCornerLayerKey(key, CornerLayers.SE),
-                    $"{layer.StateBase}{(int)cornerSE}");
+                    layer.SouthEastLayer,
+                    layer.GetState((int) cornerSE));
                 _sprite.LayerSetRsiState(
                     spriteEnt.AsNullable(),
-                    AdditionalCornerLayerKey(key, CornerLayers.SW),
-                    $"{layer.StateBase}{(int)cornerSW}");
+                    layer.SouthWestLayer,
+                    layer.GetState((int) cornerSW));
                 _sprite.LayerSetRsiState(
                     spriteEnt.AsNullable(),
-                    AdditionalCornerLayerKey(key, CornerLayers.NW),
-                    $"{layer.StateBase}{(int)cornerNW}");
+                    layer.NorthWestLayer,
+                    layer.GetState((int) cornerNW));
             }
         }
 
@@ -173,7 +199,7 @@ namespace Content.Client.IconSmoothing
 
         private void OnShutdown(EntityUid uid, IconSmoothComponent component, ComponentShutdown args)
         {
-            _dirtyEntities.Enqueue(uid);
+            QueueDirty(uid); // DS14
             DirtyNeighbours(uid, component);
         }
 
@@ -184,9 +210,15 @@ namespace Content.Client.IconSmoothing
             var xformQuery = GetEntityQuery<TransformComponent>();
             var smoothQuery = GetEntityQuery<IconSmoothComponent>();
 
-            // first process anchor state changes.
-            while (_anchorChangedEntities.TryDequeue(out var uid))
+            // DS14-start
+            // Keep map-load and large construction bursts from monopolizing a frame.
+            var work = 0;
+            while (work < MaxAnchorChangesPerFrame &&
+                   _anchorChangedEntities.TryDequeue(out var uid))
             {
+                _queuedAnchorChangedEntities.Remove(uid);
+                work++;
+
                 if (!xformQuery.TryGetComponent(uid, out var xform))
                     continue;
 
@@ -200,6 +232,7 @@ namespace Content.Client.IconSmoothing
 
                 DirtyNeighbours(uid, comp: null, xform, smoothQuery);
             }
+            // DS14-end
 
             // Next, update actual sprites.
             if (_dirtyEntities.Count == 0)
@@ -209,11 +242,15 @@ namespace Content.Client.IconSmoothing
 
             var spriteQuery = GetEntityQuery<SpriteComponent>();
 
-            // Performance: This could be spread over multiple updates, or made parallel.
-            while (_dirtyEntities.TryDequeue(out var uid))
+            // DS14-start
+            while (work < MaxQueueWorkPerFrame &&
+                   _dirtyEntities.TryDequeue(out var uid))
             {
+                _queuedDirtyEntities.Remove(uid);
+                work++;
                 CalculateNewSprite(uid, spriteQuery, smoothQuery, xformQuery);
             }
+            // DS14-end
         }
 
         public void DirtyNeighbours(EntityUid uid, IconSmoothComponent? comp = null, TransformComponent? transform = null, EntityQuery<IconSmoothComponent>? smoothQuery = null)
@@ -222,7 +259,7 @@ namespace Content.Client.IconSmoothing
             if (!smoothQuery.Value.Resolve(uid, ref comp) || !comp.Running)
                 return;
 
-            _dirtyEntities.Enqueue(uid);
+            QueueDirty(uid); // DS14
 
             if (!Resolve(uid, ref transform))
                 return;
@@ -271,15 +308,29 @@ namespace Content.Client.IconSmoothing
             // require one less component fetch/check.
             while (entities.MoveNext(out var entity))
             {
-                _dirtyEntities.Enqueue(entity.Value);
+                QueueDirty(entity.Value); // DS14
             }
         }
 
         private void OnAnchorChanged(EntityUid uid, IconSmoothComponent component, ref AnchorStateChangedEvent args)
         {
             if (!args.Detaching)
+                QueueAnchorChanged(uid); // DS14
+        }
+
+        // DS14-start
+        private void QueueDirty(EntityUid uid)
+        {
+            if (_queuedDirtyEntities.Add(uid))
+                _dirtyEntities.Enqueue(uid);
+        }
+
+        private void QueueAnchorChanged(EntityUid uid)
+        {
+            if (_queuedAnchorChangedEntities.Add(uid))
                 _anchorChangedEntities.Enqueue(uid);
         }
+        // DS14-end
 
         private void CalculateNewSprite(EntityUid uid,
             EntityQuery<SpriteComponent> spriteQuery,

@@ -4,8 +4,6 @@
   id: AirlockUnitologyEngineering
   suffix: Круг
   components:
-  - type: Sprite
-    sprite: _DeadSpace/Necromorfs/TheCircle/Structures/airlocks/uni_engnr.rsi
   - type: Wires
     layoutId: AirlockEngineering
   - type: ContainerFill
@@ -17,8 +15,6 @@
   id: AirlockUnitologyAtmospherics
   suffix: Круг
   components:
-  - type: Sprite
-    sprite: _DeadSpace/Necromorfs/TheCircle/Structures/airlocks/uni_atmos.rsi
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsNukeop ]
@@ -28,8 +24,6 @@
   id: AirlockUnitologyMedical
   suffix: Круг
   components:
-  - type: Sprite
-    sprite: _DeadSpace/Necromorfs/TheCircle/Structures/airlocks/uni_med.rsi
   - type: Wires
     layoutId: AirlockMedical
   - type: ContainerFill
@@ -41,8 +35,6 @@
   id: AirlockUnitologyVirology
   suffix: Круг
   components:
-  - type: Sprite
-    sprite: _DeadSpace/Necromorfs/TheCircle/Structures/airlocks/uni_viro.rsi
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsNukeop ]
@@ -52,8 +44,6 @@
   id: AirlockUnitologyService
   suffix: Круг
   components:
-  - type: Sprite
-    sprite: _DeadSpace/Necromorfs/TheCircle/Structures/airlocks/uni_srv.rsi
   - type: Wires
     layoutId: AirlockService
   - type: ContainerFill
@@ -65,8 +55,6 @@
   id: AirlockUnitologyCommand
   suffix: Круг
   components:
-  - type: Sprite
-    sprite: _DeadSpace/Necromorfs/TheCircle/Structures/airlocks/uni_cmd.rsi
   - type: Wires
     layoutId: AirlockCommand
   - type: ContainerFill

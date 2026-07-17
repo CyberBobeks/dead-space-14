@@ -66,17 +66,17 @@
   - type: Sprite
 # DS14-start
     drawdepth: Mobs
-    sprite: Structures/Windows/window_glass.rsi
+    sprite: _DeadSpace/Structures/Windows/window_glass.rsi
     offset: "0, 0"
     noRot: true
     layers:
-    - sprite: Structures/Windows/window_glass.rsi
+    - sprite: _DeadSpace/Structures/Windows/window_glass.rsi
       state: full
       visible: false
 # DS14-end
   - type: Icon
 # DS14-start
-    sprite: Structures/Windows/window_glass.rsi
+    sprite: _DeadSpace/Structures/Windows/window_glass.rsi
     state: full
 # DS14-end
   - type: IconSmooth
@@ -85,7 +85,7 @@
     base: window
     additionalCornerLayers:
       window-frame:
-        sprite: Structures/Windows/window_glass_framed.rsi
+        sprite: _DeadSpace/Structures/Windows/window_glass_framed.rsi
         base: windowframe
 # DS14-end
   - type: Airtight
@@ -152,8 +152,9 @@
     damageModifierSet: RGlass
 # DS14-start
   - type: Construction
-    graph: PlastitaniumWindow
+    graph: Window
     node: plastitaniumWindow
+    deconstructionTarget: frame
 # DS14-end
 
 - type: entity

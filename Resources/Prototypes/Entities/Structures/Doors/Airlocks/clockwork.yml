@@ -1,10 +1,9 @@
+# DS14: Final airlocks inherit their shared 3D Sprite from Airlock3DVisual.
 - type: entity
   parent: Airlock
   id: PinionAirlock
   suffix: Pinion, Clockwork
   components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/clockwork_pinion.rsi
   - type: Construction
     graph: PinionAirlock
     node: airlock
@@ -18,8 +17,6 @@
   id: PinionAirlockGlass
   suffix: Pinion, Clockwork
   components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Glass/clockwork_pinion.rsi
   - type: Construction
     graph: PinionAirlock
     node: glassAirlock

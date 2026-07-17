@@ -1,3 +1,4 @@
+# DS14: Final airlocks inherit their shared 3D Sprite from Airlock3DVisual.
 - type: entity
   parent: AirlockRCDResistant
   id: AirlockExternal
@@ -14,8 +15,6 @@
       path: /Audio/Machines/airlock_ext_close.ogg
     denySound:
       path: /Audio/Machines/airlock_deny.ogg
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/external.rsi
   - type: Wires
     layoutId: AirlockExternal
   - type: Paintable
@@ -30,8 +29,6 @@
     occludes: false
   - type: Occluder
     enabled: false
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Glass/external.rsi
   - type: Fixtures
     fixtures:
       fix1:

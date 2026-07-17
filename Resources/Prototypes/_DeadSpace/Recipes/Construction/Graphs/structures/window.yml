@@ -16,15 +16,11 @@
     - node: miningWindow
       entity: MiningWindow
       edges:
-        - to: start
+        - to: frame
           completed:
             - !type:SpawnPrototype
               prototype: SheetRGlass1
               amount: 2
-            - !type:SpawnPrototype
-              prototype: PartRodMetal1
-              amount: 2
-            - !type:DeleteEntity {}
           steps:
             - tool: Anchoring
               doAfter: 2
@@ -38,5 +34,6 @@
               doAfter: 5
             - tool: Screwing
               doAfter: 2
-            - tool: Anchoring
-              doAfter: 2
+
+    - node: frame
+      entity: WindowFrame

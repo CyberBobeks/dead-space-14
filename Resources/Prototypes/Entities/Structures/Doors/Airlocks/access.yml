@@ -1,53 +1,10 @@
 # Airlocks
+# DS14: Final airlocks inherit their shared 3D Sprite from Airlock3DVisual.
 - type: entity
   parent: Airlock
   id: AirlockServiceLocked
   suffix: Service, Locked
   components:
-# DS14-start
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/service.rsi
-    snapCardinals: false
-    offset: "0, 0.75"
-    layers:
-    - state: closed
-      map: ["enum.DoorVisualLayers.Base"]
-    - state: closed_unlit
-      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
-      shader: unshaded
-      map: ["enum.DoorVisualLayers.BaseUnlit"]
-      visible: false
-    - state: welded
-      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
-      map: ["enum.WeldableLayers.BaseWelded"]
-    - state: bolted_closed_unlit
-      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
-      shader: unshaded
-      map: ["enum.DoorVisualLayers.BaseBolted"]
-    - state: emergency_unlit
-      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
-      map: ["enum.DoorVisualLayers.BaseEmergencyAccess"]
-      shader: unshaded
-    - state: panel_open
-      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
-      map: ["enum.WiresVisualLayers.MaintenancePanel"]
-      visible: false
-    - state: electrified_ai
-      sprite: Interface/Misc/ai_hud.rsi
-      shader: unshaded
-      visible: false
-      map: ["enum.ElectrifiedLayers.HUD"]
-    - state: electrified
-      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
-      shader: unshaded
-      visible: false
-      map: ["enum.ElectrifiedLayers.Sparks"]
-    - state: sparks
-      sprite: Structures/Doors/Airlocks/airlock_effects.rsi
-      map: ["enum.DoorVisualLayers.BaseEmagging"]
-      shader: unshaded
-      visible: false
-# DS14-end
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsService ]
@@ -945,290 +902,126 @@
 - type: entity
   parent: AirlockSalvageLocked
   id: AirlockMaintSalvageLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockCargoLocked
   id: AirlockMaintCargoLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockCommandLocked
   id: AirlockMaintCommandLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockEngineeringLocked
   id: AirlockMaintEngiLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockAtmosphericsLocked
   id: AirlockMaintAtmoLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockBarLocked
   id: AirlockMaintBarLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
-# DS14-start
-    snapCardinals: true
-    offset: "0, 0"
-    layers: &DS14MaintAirlockLayers
-    - state: closed
-      map: ["enum.DoorVisualLayers.Base"]
-    - state: closed_unlit
-      shader: unshaded
-      map: ["enum.DoorVisualLayers.BaseUnlit"]
-      visible: false
-    - state: welded
-      map: ["enum.WeldableLayers.BaseWelded"]
-    - state: bolted_unlit
-      shader: unshaded
-      map: ["enum.DoorVisualLayers.BaseBolted"]
-    - state: emergency_unlit
-      map: ["enum.DoorVisualLayers.BaseEmergencyAccess"]
-      shader: unshaded
-    - state: panel_open
-      map: ["enum.WiresVisualLayers.MaintenancePanel"]
-      visible: false
-    - state: electrified_ai
-      sprite: Interface/Misc/ai_hud.rsi
-      shader: unshaded
-      visible: false
-      map: ["enum.ElectrifiedLayers.HUD"]
-    - state: electrified
-      sprite: Effects/electricity.rsi
-      shader: unshaded
-      visible: false
-      map: ["enum.ElectrifiedLayers.Sparks"]
-    - state: sparks
-      map: ["enum.DoorVisualLayers.BaseEmagging"]
-      shader: unshaded
-      visible: false
-# DS14-end
 
 - type: entity
   parent: AirlockBarKitchenLocked
   id: AirlockMaintBarKitchenLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
-# DS14-start
-    snapCardinals: true
-    offset: "0, 0"
-    layers: *DS14MaintAirlockLayers
-# DS14-end
 
 - type: entity
   parent: AirlockChapelLocked
   id: AirlockMaintChapelLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
-# DS14-start
-    snapCardinals: true
-    offset: "0, 0"
-    layers: *DS14MaintAirlockLayers
-# DS14-end
 
 - type: entity
   parent: AirlockHydroponicsLocked
   id: AirlockMaintHydroLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockJanitorLocked
   id: AirlockMaintJanitorLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
-# DS14-start
-    snapCardinals: true
-    offset: "0, 0"
-    layers: *DS14MaintAirlockLayers
-# DS14-end
 
 - type: entity
   parent: AirlockLawyerLocked
   id: AirlockMaintLawyerLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockServiceLocked
   id: AirlockMaintServiceLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
-# DS14-start
-    snapCardinals: true
-    offset: "0, 0"
-    layers: *DS14MaintAirlockLayers
-# DS14-end
 
 - type: entity
   parent: AirlockTheatreLocked
   id: AirlockMaintTheatreLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
-# DS14-start
-    snapCardinals: true
-    offset: "0, 0"
-    layers: *DS14MaintAirlockLayers
-# DS14-end
 
 - type: entity
   parent: AirlockServiceTheatreLocked
   id: AirlockMaintServiceTheatreLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
-# DS14-start
-    snapCardinals: true
-    offset: "0, 0"
-    layers: *DS14MaintAirlockLayers
-# DS14-end
 
 - type: entity
   parent: AirlockKitchenLocked
   id: AirlockMaintKitchenLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
-# DS14-start
-    snapCardinals: true
-    offset: "0, 0"
-    layers: *DS14MaintAirlockLayers
-# DS14-end
 
 - type: entity
   parent: AirlockFreezerKitchenHydroLocked
   id: AirlockMaintKitchenHydroLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockMedicalLocked
   id: AirlockMaintMedLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockMedicalMorgueLocked
   id: AirlockMedicalMorgueMaintLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockChemistryLocked
   id: AirlockMaintChemLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockScienceLocked
   id: AirlockMaintRnDLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockMedicalScienceLocked
   id: AirlockMaintRnDMedLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockSecurityLocked
   id: AirlockMaintSecLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockDetectiveLocked
   id: AirlockMaintDetectiveLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockHeadOfPersonnelLocked
   id: AirlockMaintHOPLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockCaptainLocked
   id: AirlockMaintCaptainLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockChiefEngineerLocked
   id: AirlockMaintChiefEngineerLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockChiefMedicalOfficerLocked
   id: AirlockMaintChiefMedicalOfficerLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockHeadOfSecurityLocked
   id: AirlockMaintHeadOfSecurityLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockResearchDirectorLocked
   id: AirlockMaintResearchDirectorLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockQuartermasterLocked
   id: AirlockMaintQuartermasterLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockArmoryLocked
   id: AirlockMaintArmoryLocked
-  components:
-  - type: Sprite
-    sprite: Structures/Doors/Airlocks/Standard/maint.rsi
 
 - type: entity
   parent: AirlockSyndicate

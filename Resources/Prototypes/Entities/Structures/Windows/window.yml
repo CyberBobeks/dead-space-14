@@ -1,3 +1,89 @@
+# DS14-start
+- type: entity
+  id: WindowFrame
+  parent: BaseStructure
+  name: window frame
+  description: A universal frame for a full-tile window. Add glass after selecting the desired type.
+  placement:
+    mode: SnapgridCenter
+    snap:
+    - Window
+  components:
+  - type: Anchorable
+    flags:
+    - Anchorable
+  - type: Rotatable
+  - type: WallMount
+    arc: 360
+  - type: Tag
+    tags:
+    - ForceFixRotations
+    - Window
+  - type: Sprite
+    drawdepth: Mobs
+    sprite: _DeadSpace/Structures/Windows/window_glass_framed.rsi
+    offset: "0, 0"
+    noRot: true
+  - type: Icon
+    sprite: _DeadSpace/Structures/Windows/window_glass_framed.rsi
+    state: windowframe0
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Damageable
+    damageContainer: StructuralInorganic
+    damageModifierSet: RGlass
+  - type: ExaminableDamage
+    messages: WindowMessages
+  - type: Repairable
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalSlam
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          PartRodMetal1:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: windows-glass
+    base: windowframe
+  - type: Appearance
+  - type: Construction
+    graph: Window
+    node: frame
+    deconstructionTarget: start
+  - type: WindowFrame
+    options:
+    - Window
+    - ReinforcedWindow
+    - TintedWindow
+    - MiningWindow
+    - PlasmaWindow
+    - ReinforcedPlasmaWindow
+    - UraniumWindow
+    - ReinforcedUraniumWindow
+    - ClockworkWindow
+    - ShuttleWindow
+    - PlastitaniumWindow
+    - PlastitaniumPlasmaWindow
+# DS14-end
+
 - type: entity
   id: Window
   parent: [BaseDeltaPressureGlass, BaseStructure]
@@ -25,17 +111,17 @@
   - type: Sprite
 # DS14-start
     drawdepth: Mobs
-    sprite: Structures/Windows/window_glass.rsi
+    sprite: _DeadSpace/Structures/Windows/window_glass.rsi
     offset: "0, 0"
     noRot: true
     layers:
-    - sprite: Structures/Windows/window_glass.rsi
+    - sprite: _DeadSpace/Structures/Windows/window_glass.rsi
       state: full
       visible: false
 # DS14-end
   - type: Icon
 # DS14-start
-    sprite: Structures/Windows/window_glass.rsi
+    sprite: _DeadSpace/Structures/Windows/window_glass.rsi
     state: full
 # DS14-end
   - type: Physics
@@ -91,7 +177,7 @@
 # DS14-start
     additionalCornerLayers:
       window-frame:
-        sprite: Structures/Windows/window_glass_framed.rsi
+        sprite: _DeadSpace/Structures/Windows/window_glass_framed.rsi
         base: windowframe
 # DS14-end
   - type: InteractionPopup
@@ -102,6 +188,9 @@
   - type: Construction
     graph: Window
     node: window
+# DS14-start
+    deconstructionTarget: frame
+# DS14-end
   - type: Appearance
   - type: DamageVisuals
     thresholds: [5, 10, 20]

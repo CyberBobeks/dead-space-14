@@ -23,7 +23,7 @@
   - node: plastitaniumplasmaWindow
     entity: PlastitaniumPlasmaWindow
     edges:
-    - to: start
+    - to: frame
       completed:
       - !type:SpawnPrototype
         prototype: SheetRPGlass1
@@ -47,13 +47,11 @@
         doAfter: 2
       - tool: Welding
         doAfter: 4
-      - tool: Anchoring
-        doAfter: 1
 
   - node: plastitaniumWindow
     entity: PlastitaniumWindow
     edges:
-    - to: start
+    - to: frame
       completed:
       - !type:SpawnPrototype
         prototype: SheetRGlass1
@@ -77,8 +75,9 @@
         doAfter: 2
       - tool: Welding
         doAfter: 4
-      - tool: Anchoring
-        doAfter: 1
+
+  - node: frame
+    entity: WindowFrame
 
 - type: constructionGraph
   id: PlastitaniumWindowDiagonal
