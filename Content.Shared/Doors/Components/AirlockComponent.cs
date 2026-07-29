@@ -2,6 +2,7 @@ using Content.Shared.DeviceLinking;
 using Content.Shared.Doors.Systems;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
+using Robust.Shared.Maths;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Shared.Doors.Components;
@@ -84,6 +85,14 @@ public sealed partial class AirlockComponent : Component
     public string AutoClosePort = "AutoClose";
 
     #region Graphics
+
+    // DS14-start
+    /// <summary>
+    /// Client-only occluder bounds used to align FOV shadows with the 3D sprite without changing server LOS.
+    /// </summary>
+    [DataField]
+    public Box2? VisualOccluderBounds;
+    // DS14-end
 
     /// <summary>
     /// Whether the door lights should be visible.

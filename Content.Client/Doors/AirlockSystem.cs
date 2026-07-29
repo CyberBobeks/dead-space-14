@@ -10,6 +10,7 @@ namespace Content.Client.Doors;
 public sealed class AirlockSystem : SharedAirlockSystem
 {
     [Dependency] private readonly AppearanceSystem _appearanceSystem = default!;
+    [Dependency] private readonly OccluderSystem _occluderSystem = default!; // DS14
     [Dependency] private readonly SpriteSystem _sprite = default!;
 
     public override void Initialize()
@@ -18,6 +19,22 @@ public sealed class AirlockSystem : SharedAirlockSystem
         SubscribeLocalEvent<AirlockComponent, ComponentStartup>(OnComponentStartup);
         SubscribeLocalEvent<AirlockComponent, AppearanceChangeEvent>(OnAppearanceChange);
     }
+
+    // DS14-start
+    public override void FrameUpdate(float frameTime)
+    {
+        base.FrameUpdate(frameTime);
+
+        var query = EntityQueryEnumerator<AirlockComponent, OccluderComponent>();
+        while (query.MoveNext(out var uid, out var airlock, out var occluder))
+        {
+            if (airlock.VisualOccluderBounds is not { } bounds || occluder.BoundingBox == bounds)
+                continue;
+
+            _occluderSystem.SetBoundingBox(uid, bounds, occluder);
+        }
+    }
+    // DS14-end
 
     private void OnComponentStartup(EntityUid uid, AirlockComponent comp, ComponentStartup args)
     {

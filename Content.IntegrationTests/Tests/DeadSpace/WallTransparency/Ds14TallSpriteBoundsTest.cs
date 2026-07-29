@@ -9,6 +9,7 @@ using Robust.Shared.GameObjects;
 using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
 using Robust.UnitTesting;
+using ClientAirlockSystem = Content.Client.Doors.AirlockSystem;
 using DrawDepth = Content.Shared.DrawDepth.DrawDepth;
 
 namespace Content.IntegrationTests.Tests.DeadSpace.WallTransparency;
@@ -16,6 +17,9 @@ namespace Content.IntegrationTests.Tests.DeadSpace.WallTransparency;
 [TestFixture]
 public sealed class Ds14TallSpriteBoundsTest
 {
+    private static readonly Box2 GameplayOccluderBounds = new(-0.5f, -0.5f, 0.5f, 0.5f);
+    private static readonly Box2 VisualOccluderBounds = new(-0.5f, -0.25f, 0.5f, 0.25f);
+
     [Test]
     public async Task TallWallWindowAndAllAirlockSpritesCalculateClientBounds()
     {
@@ -192,6 +196,15 @@ public sealed class Ds14TallSpriteBoundsTest
                         door.ClosedDrawDepth,
                         Is.EqualTo(expectedDepth),
                         $"{serverPrototype.ID} has wrong closed draw depth.");
+
+                    Assert.That(
+                        serverPrototype.TryGetComponent<AirlockComponent>(out var airlock, serverComponentFactory),
+                        Is.True,
+                        $"{serverPrototype.ID} has no Airlock component.");
+                    Assert.That(
+                        airlock.VisualOccluderBounds,
+                        Is.EqualTo(VisualOccluderBounds),
+                        $"{serverPrototype.ID} has wrong visual occluder bounds.");
                 }
             });
         });
@@ -209,6 +222,8 @@ public sealed class Ds14TallSpriteBoundsTest
         string[] prototypes,
         string context)
     {
+        await client.WaitPost(() => clientEntManager.System<ClientAirlockSystem>().FrameUpdate(0f));
+
         await client.WaitAssertion(() =>
         {
             for (var i = 0; i < serverEntities.Length; i++)
@@ -224,6 +239,21 @@ public sealed class Ds14TallSpriteBoundsTest
                 {
                     Assert.Fail($"{prototypes[i]} failed sprite bounds in {context}: {ex}");
                 }
+
+                if (!serverEntManager.HasComponent<AirlockComponent>(serverEntities[i]))
+                    continue;
+
+                var serverOccluder = serverEntManager.GetComponent<OccluderComponent>(serverEntities[i]);
+                var clientOccluder = clientEntManager.GetComponent<OccluderComponent>(clientEnt);
+
+                Assert.That(
+                    serverOccluder.BoundingBox,
+                    Is.EqualTo(GameplayOccluderBounds),
+                    $"{prototypes[i]} changed its server occluder bounds in {context}.");
+                Assert.That(
+                    clientOccluder.BoundingBox,
+                    Is.EqualTo(VisualOccluderBounds),
+                    $"{prototypes[i]} has wrong client visual occluder bounds in {context}.");
             }
         });
     }

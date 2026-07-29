@@ -46,6 +46,8 @@
       map: ["enum.DoorVisualLayers.BaseEmagging"]
       shader: unshaded
       visible: false
+  - type: Airlock
+    visualOccluderBounds: "-0.5,-0.25,0.5,0.25"
 # DS14-end
 
 - type: entity
