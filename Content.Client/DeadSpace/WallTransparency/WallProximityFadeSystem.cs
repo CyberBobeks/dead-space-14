@@ -9,6 +9,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
+using Robust.Shared.Player;
 
 namespace Content.Client.DeadSpace.WallTransparency;
 
@@ -17,13 +18,14 @@ public sealed class WallProximityFadeSystem : EntitySystem
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IEyeManager _eye = default!;
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
+    [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly SpriteSystem _sprite = default!;
     [Dependency] private readonly TransformSystem _transform = default!;
 
     private const float ItemLookupRadius = 2.05f;
     private const float PlayerLookupRadius = 2.30f;
-    private const float ItemSafetyRefreshInterval = 1f;
+    private const float SourceSafetyRefreshInterval = 1f;
     private const float CameraRefreshDistanceSquared = 0.25f;
     private const float PlayerMovementEpsilonSquared = 0.0001f;
     private const float AbsoluteMinAlpha = 0.5f;
@@ -58,11 +60,12 @@ public sealed class WallProximityFadeSystem : EntitySystem
     private int _wallIndexVersion;
     private int _lastPlayerWallIndexVersion = -1;
     private int _targetGeneration;
-    private float _itemSafetyRefreshTimer;
+    private float _sourceSafetyRefreshTimer;
     private bool _hasCameraPosition;
     private bool _hasPlayerPosition;
     private bool _itemPassActive;
     private bool _itemsDirty = true;
+    private bool _playersDirty = true;
 
     public override void Initialize()
     {
@@ -82,6 +85,11 @@ public sealed class WallProximityFadeSystem : EntitySystem
         SubscribeLocalEvent<ItemComponent, ComponentStartup>(OnItemChanged);
         SubscribeLocalEvent<ItemComponent, MoveEvent>(OnItemMoved);
         SubscribeLocalEvent<ItemComponent, ComponentShutdown>(OnItemChanged);
+
+        SubscribeLocalEvent<ActorComponent, ComponentStartup>(OnPlayerChanged);
+        SubscribeLocalEvent<ActorComponent, MoveEvent>(OnPlayerMoved);
+        SubscribeLocalEvent<PlayerAttachedEvent>(OnPlayerAttached);
+        SubscribeLocalEvent<PlayerDetachedEvent>(OnPlayerDetached);
     }
 
     public override void Update(float frameTime)
@@ -101,7 +109,7 @@ public sealed class WallProximityFadeSystem : EntitySystem
                 out _))
         {
             UpdatePlayerTargets(player, playerGrid, grid, playerPosition);
-            UpdateItemRefreshState(frameTime);
+            UpdateSourceRefreshState(frameTime);
 
             if (_itemPassActive && _itemPassPlayer != player)
                 CancelItemPass();
@@ -127,7 +135,8 @@ public sealed class WallProximityFadeSystem : EntitySystem
         MapGridComponent grid,
         Vector2 playerPosition)
     {
-        if (_hasPlayerPosition &&
+        if (!_playersDirty &&
+            _hasPlayerPosition &&
             _lastPlayer == player &&
             _lastPlayerGrid == gridUid &&
             _lastPlayerWallIndexVersion == _wallIndexVersion &&
@@ -145,20 +154,52 @@ public sealed class WallProximityFadeSystem : EntitySystem
             isPlayer: true,
             _playerWallTargets);
 
+        var query = EntityQueryEnumerator<ActorComponent, SpriteComponent, TransformComponent>();
+        while (query.MoveNext(
+                   out var otherPlayer,
+                   out _,
+                   out var sprite,
+                   out var xform))
+        {
+            if (otherPlayer == player ||
+                !sprite.Visible ||
+                sprite.ContainerOccluded ||
+                xform.MapID != _eye.CurrentMap ||
+                !TryGetGridPosition(
+                    xform,
+                    out var otherGridUid,
+                    out var otherGrid,
+                    out var otherPosition,
+                    out _))
+            {
+                continue;
+            }
+
+            AddSource(
+                otherGridUid,
+                otherGrid,
+                otherPosition,
+                PlayerLookupRadius,
+                isPlayer: true,
+                _playerWallTargets);
+        }
+
         _lastPlayer = player;
         _lastPlayerGrid = gridUid;
         _lastPlayerPosition = playerPosition;
         _lastPlayerWallIndexVersion = _wallIndexVersion;
         _hasPlayerPosition = true;
+        _playersDirty = false;
     }
 
-    private void UpdateItemRefreshState(float frameTime)
+    private void UpdateSourceRefreshState(float frameTime)
     {
-        _itemSafetyRefreshTimer -= frameTime;
-        if (_itemSafetyRefreshTimer <= 0f)
+        _sourceSafetyRefreshTimer -= frameTime;
+        if (_sourceSafetyRefreshTimer <= 0f)
         {
-            _itemSafetyRefreshTimer = ItemSafetyRefreshInterval;
+            _sourceSafetyRefreshTimer = SourceSafetyRefreshInterval;
             _itemsDirty = true;
+            _playersDirty = true;
         }
 
         var cameraPosition = _eye.GetWorldViewport().Center;
@@ -259,8 +300,9 @@ public sealed class WallProximityFadeSystem : EntitySystem
         _itemWallTargets.Clear();
         _hasPlayerPosition = false;
         _hasCameraPosition = false;
-        _itemSafetyRefreshTimer = 0f;
+        _sourceSafetyRefreshTimer = 0f;
         _itemsDirty = true;
+        _playersDirty = true;
 
         if (_itemPassActive)
             CancelItemPass();
@@ -532,6 +574,26 @@ public sealed class WallProximityFadeSystem : EntitySystem
         _itemsDirty = true;
     }
 
+    private void OnPlayerChanged(EntityUid uid, ActorComponent component, ComponentStartup args)
+    {
+        _playersDirty = true;
+    }
+
+    private void OnPlayerAttached(PlayerAttachedEvent args)
+    {
+        _playersDirty = true;
+    }
+
+    private void OnPlayerDetached(PlayerDetachedEvent args)
+    {
+        _playersDirty = true;
+    }
+
+    private void OnPlayerMoved(EntityUid uid, ActorComponent component, ref MoveEvent args)
+    {
+        _playersDirty = true;
+    }
+
     private bool TryGetGridPosition(
         TransformComponent xform,
         out EntityUid gridUid,
@@ -539,19 +601,50 @@ public sealed class WallProximityFadeSystem : EntitySystem
         out Vector2 localPosition,
         out Angle localRotation)
     {
-        if (xform.GridUid is not { } uid ||
-            xform.MapID == MapId.Nullspace ||
-            !_gridQuery.TryGetComponent(uid, out var gridComponent))
-        {
-            gridUid = default;
-            grid = default!;
-            localPosition = default;
-            localRotation = default;
+        gridUid = default;
+        grid = default!;
+        localPosition = default;
+        localRotation = default;
+
+        if (xform.MapID == MapId.Nullspace)
             return false;
+
+        EntityUid uid;
+        MapGridComponent gridComponent;
+        var foundByMap = false;
+        var mapCoordinates = default(MapCoordinates);
+        if (xform.GridUid is { } xformGrid &&
+            _gridQuery.TryGetComponent(xformGrid, out var xformGridComponent))
+        {
+            uid = xformGrid;
+            gridComponent = xformGridComponent;
+        }
+        else
+        {
+            mapCoordinates = _transform.GetMapCoordinates(xform);
+            if (!_mapManager.TryFindGridAt(
+                    mapCoordinates,
+                    out uid,
+                    out var mapGridComponent))
+            {
+                return false;
+            }
+
+            gridComponent = mapGridComponent;
+            foundByMap = true;
         }
 
         gridUid = uid;
         grid = gridComponent;
+
+        if (foundByMap)
+        {
+            localPosition = _transform.ToCoordinates(gridUid, mapCoordinates).Position;
+            localRotation =
+                _transform.GetWorldRotation(xform) -
+                _transform.GetWorldRotation(gridUid);
+            return true;
+        }
 
         if (xform.ParentUid == gridUid)
         {

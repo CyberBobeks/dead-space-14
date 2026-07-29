@@ -8,6 +8,8 @@ using Robust.Server.Player;
 using Robust.Shared.Containers;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Maths;
+using Robust.Shared.Network;
+using Robust.Shared.Player;
 using Robust.UnitTesting;
 
 namespace Content.IntegrationTests.Tests.DeadSpace.WallTransparency;
@@ -33,7 +35,7 @@ public sealed class Ds14WallProximityFadeTest
 """;
 
     [Test]
-    public async Task PlayerAndWorldItemsFadeWallsButContainedHiddenAndNonItemsDoNot()
+    public async Task VisiblePlayersAndWorldItemsFadeWallsButContainedHiddenAndNonItemsDoNot()
     {
         await using var pair = await PoolManager.GetServerClient(new PoolSettings { Connected = true });
         var server = pair.Server;
@@ -42,28 +44,36 @@ public sealed class Ds14WallProximityFadeTest
         var serverEntManager = server.ResolveDependency<IEntityManager>();
         var clientEntManager = client.ResolveDependency<IEntityManager>();
         var serverPlayers = server.ResolveDependency<IPlayerManager>();
+        var clientPlayers = client.ResolveDependency<Robust.Client.Player.IPlayerManager>();
+        var serverMapSystem = serverEntManager.System<SharedMapSystem>();
         var serverTransform = serverEntManager.System<SharedTransformSystem>();
         var containerSystem = serverEntManager.System<SharedContainerSystem>();
         var clientSpriteSystem = clientEntManager.System<SpriteSystem>();
         var spriteQuery = clientEntManager.GetEntityQuery<SpriteComponent>();
         var fadeQuery = clientEntManager.GetEntityQuery<WallProximityFadeComponent>();
         var testMap = await pair.CreateTestMap();
+        var wallCoordinates = testMap.GridCoords;
 
         EntityUid wall = default;
         EntityUid player = default;
         EntityUid item = default;
         EntityUid holder = default;
         BaseContainer container = default!;
+        ICommonSession otherSession = default!;
 
         await server.WaitPost(() =>
         {
+            serverMapSystem.SetTile(testMap.Grid, new Vector2i(0, 1), testMap.Tile.Tile);
+            serverMapSystem.SetTile(testMap.Grid, new Vector2i(0, 2), testMap.Tile.Tile);
+            serverMapSystem.SetTile(testMap.Grid, new Vector2i(1, 0), testMap.Tile.Tile);
             wall = serverEntManager.SpawnEntity("WallSolid", testMap.GridCoords);
+            wallCoordinates = serverEntManager.GetComponent<TransformComponent>(wall).Coordinates;
             // Full wall sprites stay visually upright while their four-directional
             // RSI state follows map rotation. Fade direction must ignore this rotation.
             serverTransform.SetLocalRotation(wall, Angle.FromDegrees(90f));
             player = serverEntManager.SpawnEntity(
                 "MobHuman",
-                testMap.GridCoords.Offset(new Vector2(5f, 5f)));
+                wallCoordinates.Offset(new Vector2(5f, 5f)));
             server.PlayerMan.SetAttachedEntity(serverPlayers.Sessions.Single(), player);
         });
 
@@ -80,7 +90,7 @@ public sealed class Ds14WallProximityFadeTest
         {
             serverTransform.SetCoordinates(
                 player,
-                testMap.GridCoords.Offset(new Vector2(0f, 2.02f)));
+                wallCoordinates.Offset(new Vector2(0f, 2.02f)));
         });
         await pair.RunTicksSync(40);
         Assert.That(await GetWallAlpha(client, clientWall, spriteQuery), Is.InRange(0.70f, 0.90f));
@@ -89,20 +99,51 @@ public sealed class Ds14WallProximityFadeTest
         {
             serverTransform.SetCoordinates(
                 player,
-                testMap.GridCoords.Offset(new Vector2(5f, 5f)));
+                wallCoordinates.Offset(new Vector2(5f, 5f)));
             item = serverEntManager.SpawnEntity(
                 "Ds14WallFadeItem",
-                testMap.GridCoords.Offset(new Vector2(0f, 2.02f)));
+                wallCoordinates.Offset(new Vector2(0f, 2.02f)));
         });
         await pair.RunTicksSync(40);
         Assert.That(await GetWallAlpha(client, clientWall, spriteQuery), Is.GreaterThan(0.98f));
+
+        // Other client-visible players use the same fade radius and occlusion test as the local player.
+        var clientPlayerItem = clientEntManager.GetEntity(serverEntManager.GetNetEntity(item));
+        await client.WaitPost(() =>
+        {
+            otherSession = clientPlayers.CreateAndAddSession(
+                new NetUserId(Guid.NewGuid()),
+                "wall-fade-other-player");
+            otherSession.ClientSide = true;
+            clientPlayers.SetAttachedEntity(otherSession, clientPlayerItem, force: true);
+        });
+        await pair.RunTicksSync(40);
+        Assert.That(await GetWallAlpha(client, clientWall, spriteQuery), Is.InRange(0.70f, 0.90f));
+
+        // Invisible players must not leak their position by fading nearby walls.
+        await client.WaitPost(() =>
+        {
+            var sprite = spriteQuery.GetComponent(clientPlayerItem);
+            clientSpriteSystem.SetVisible((clientPlayerItem, sprite), false);
+        });
+        await pair.RunSeconds(2f);
+        Assert.That(await GetWallAlpha(client, clientWall, spriteQuery), Is.GreaterThan(0.98f));
+
+        await client.WaitPost(() =>
+        {
+            clientPlayers.SetAttachedEntity(otherSession, null);
+            clientPlayers.RemoveSession(otherSession);
+            var sprite = spriteQuery.GetComponent(clientPlayerItem);
+            clientSpriteSystem.SetVisible((clientPlayerItem, sprite), true);
+        });
+        await pair.RunTicksSync(10);
 
         // A visible item directly in the world fades the wall.
         await server.WaitPost(() =>
         {
             serverTransform.SetCoordinates(
                 item,
-                testMap.GridCoords.Offset(new Vector2(0f, 1f)));
+                wallCoordinates.Offset(new Vector2(0f, 1f)));
         });
         await pair.RunTicksSync(40);
         Assert.That(await GetWallAlpha(client, clientWall, spriteQuery), Is.InRange(0.64f, 0.70f));
@@ -112,7 +153,7 @@ public sealed class Ds14WallProximityFadeTest
         {
             serverTransform.SetCoordinates(
                 item,
-                testMap.GridCoords.Offset(new Vector2(0.5f, 0.1f)));
+                wallCoordinates.Offset(new Vector2(0.5f, 0.1f)));
         });
         await pair.RunTicksSync(40);
         Assert.That(await GetWallAlpha(client, clientWall, spriteQuery), Is.GreaterThan(0.98f));
@@ -123,7 +164,7 @@ public sealed class Ds14WallProximityFadeTest
             serverEntManager.DeleteEntity(item);
             item = serverEntManager.SpawnEntity(
                 "Ds14WallFadeStaticItem",
-                testMap.GridCoords.Offset(new Vector2(0f, 1f)));
+                wallCoordinates.Offset(new Vector2(0f, 1f)));
         });
         await pair.RunTicksSync(40);
         Assert.That(await GetWallAlpha(client, clientWall, spriteQuery), Is.GreaterThan(0.98f));
@@ -134,10 +175,10 @@ public sealed class Ds14WallProximityFadeTest
             serverEntManager.DeleteEntity(item);
             item = serverEntManager.SpawnEntity(
                 "Ds14WallFadeItem",
-                testMap.GridCoords.Offset(new Vector2(0f, 1f)));
+                wallCoordinates.Offset(new Vector2(0f, 1f)));
             holder = serverEntManager.SpawnEntity(
                 null,
-                testMap.GridCoords.Offset(new Vector2(0f, 1f)));
+                wallCoordinates.Offset(new Vector2(0f, 1f)));
             container = containerSystem.EnsureContainer<Container>(holder, "fade-test");
             Assert.That(containerSystem.Insert(item, container, force: true));
         });
@@ -150,7 +191,7 @@ public sealed class Ds14WallProximityFadeTest
             Assert.That(containerSystem.Remove(item, container, reparent: true, force: true));
             serverTransform.SetCoordinates(
                 item,
-                testMap.GridCoords.Offset(new Vector2(0f, 1f)));
+                wallCoordinates.Offset(new Vector2(0f, 1f)));
         });
         await pair.RunTicksSync(5);
 
@@ -169,7 +210,7 @@ public sealed class Ds14WallProximityFadeTest
             serverEntManager.DeleteEntity(item);
             serverEntManager.SpawnEntity(
                 "Airlock",
-                testMap.GridCoords.Offset(new Vector2(0f, 1f)));
+                wallCoordinates.Offset(new Vector2(0f, 1f)));
         });
         await pair.RunTicksSync(40);
         Assert.That(await GetWallAlpha(client, clientWall, spriteQuery), Is.GreaterThan(0.98f));
@@ -179,10 +220,10 @@ public sealed class Ds14WallProximityFadeTest
         {
             serverTransform.SetCoordinates(
                 player,
-                testMap.GridCoords.Offset(new Vector2(0f, 2f)));
+                wallCoordinates.Offset(new Vector2(0f, 2f)));
             item = serverEntManager.SpawnEntity(
                 "Ds14WallFadeItem",
-                testMap.GridCoords.Offset(new Vector2(0f, 1f)));
+                wallCoordinates.Offset(new Vector2(0f, 1f)));
         });
         await pair.RunTicksSync(40);
         Assert.That(await GetWallAlpha(client, clientWall, spriteQuery), Is.InRange(0.64f, 0.70f));
@@ -195,7 +236,7 @@ public sealed class Ds14WallProximityFadeTest
         {
             serverTransform.SetCoordinates(
                 player,
-                testMap.GridCoords.Offset(new Vector2(5f, 5f)));
+                wallCoordinates.Offset(new Vector2(5f, 5f)));
         });
         await pair.RunTicksSync(40);
         Assert.That(await GetWallAlpha(client, clientWall, spriteQuery), Is.GreaterThan(0.98f));
