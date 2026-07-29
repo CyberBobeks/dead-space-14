@@ -19,7 +19,7 @@ public sealed class Ds14TallSpriteBoundsTest
 {
     private static readonly Box2 GameplayOccluderBounds = new(-0.5f, -0.5f, 0.5f, 0.5f);
     private static readonly Box2 VisualOccluderBounds = new(-0.5f, -0.25f, 0.5f, 0.25f);
-    private static readonly Vector2 AirlockSpriteOffset = new(0f, 0.75f);
+    private static readonly Vector2 AirlockFrontVisualOffset = new(0f, 0.25f);
 
     [Test]
     public async Task TallWallWindowAndAllAirlockSpritesCalculateClientBounds()
@@ -183,8 +183,9 @@ public sealed class Ds14TallSpriteBoundsTest
                         $"{serverPrototype.ID} uses a departmental RSI.");
                     Assert.That(
                         sprite.Offset,
-                        Is.EqualTo(AirlockSpriteOffset),
-                        $"{serverPrototype.ID} has wrong sprite offset.");
+                        Is.EqualTo(Vector2.Zero),
+                        $"{serverPrototype.ID} has a prototype sprite offset.");
+                    Assert.That(sprite.NoRotation, Is.False, $"{serverPrototype.ID} does not rotate its sprite.");
                     Assert.That(sprite.SnapCardinals, Is.False, $"{serverPrototype.ID} snaps to cardinals.");
                     Assert.That(sprite.DrawDepth, Is.EqualTo(expectedDepth), $"{serverPrototype.ID} has wrong draw depth.");
 
@@ -209,6 +210,10 @@ public sealed class Ds14TallSpriteBoundsTest
                         airlock.VisualOccluderBounds,
                         Is.EqualTo(VisualOccluderBounds),
                         $"{serverPrototype.ID} has wrong visual occluder bounds.");
+                    Assert.That(
+                        airlock.FrontVisualOffset,
+                        Is.EqualTo(AirlockFrontVisualOffset),
+                        $"{serverPrototype.ID} has wrong front visual offset.");
                 }
             });
         });
@@ -249,6 +254,12 @@ public sealed class Ds14TallSpriteBoundsTest
 
                 var serverOccluder = serverEntManager.GetComponent<OccluderComponent>(serverEntities[i]);
                 var clientOccluder = clientEntManager.GetComponent<OccluderComponent>(clientEnt);
+                var clientXform = clientEntManager.GetComponent<TransformComponent>(clientEnt);
+                var localRotation = clientXform.LocalRotation;
+                var expectedSpriteOffset =
+                    localRotation.GetCardinalDir() is Direction.North or Direction.South
+                        ? (-localRotation).RotateVec(AirlockFrontVisualOffset)
+                        : Vector2.Zero;
 
                 Assert.That(
                     serverOccluder.BoundingBox,
@@ -258,6 +269,11 @@ public sealed class Ds14TallSpriteBoundsTest
                     clientOccluder.BoundingBox,
                     Is.EqualTo(VisualOccluderBounds),
                     $"{prototypes[i]} has wrong client visual occluder bounds in {context}.");
+                Assert.That(
+                    sprite.Offset.EqualsApprox(expectedSpriteOffset),
+                    Is.True,
+                    $"{prototypes[i]} has wrong directional offset in {context}.");
+                Assert.That(sprite.NoRotation, Is.False, $"{prototypes[i]} does not rotate its sprite in {context}.");
             }
         });
     }

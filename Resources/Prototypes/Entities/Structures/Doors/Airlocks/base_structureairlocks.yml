@@ -7,7 +7,7 @@
     drawdepth: Mobs
     sprite: _DeadSpace/Structures/Doors/Airlocks/standard.rsi
     snapCardinals: false
-    offset: "0, 0.75"
+    offset: "0, 0"
     layers:
     - state: closed
       map: ["enum.DoorVisualLayers.Base"]
@@ -48,6 +48,12 @@
       visible: false
   - type: Airlock
     visualOccluderBounds: "-0.5,-0.25,0.5,0.25"
+    frontVisualOffset: "0,0.25"
+  - type: IconSmooth
+    key: airlocks
+    mode: NoSprite
+    matchingKeyPrefixes:
+    - walls
 # DS14-end
 
 - type: entity

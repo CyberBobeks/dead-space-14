@@ -498,13 +498,16 @@ namespace Content.Client.IconSmoothing
             CalculateEdge(sprite, directions, sprite);
         }
 
+        // DS14-start
         private bool MatchingEntity(IconSmoothComponent smooth, AnchoredEntitiesEnumerator candidates, EntityQuery<IconSmoothComponent> smoothQuery)
         {
             while (candidates.MoveNext(out var entity))
             {
                 if (smoothQuery.TryGetComponent(entity, out var other) &&
                     other.SmoothKey != null &&
-                    (other.SmoothKey == smooth.SmoothKey || smooth.AdditionalKeys.Contains(other.SmoothKey)) &&
+                    (other.SmoothKey == smooth.SmoothKey ||
+                     smooth.AdditionalKeys.Contains(other.SmoothKey) ||
+                     MatchesKeyPrefix(smooth, other)) &&
                     other.Enabled)
                 {
                     return true;
@@ -513,6 +516,21 @@ namespace Content.Client.IconSmoothing
 
             return false;
         }
+
+        private static bool MatchesKeyPrefix(IconSmoothComponent smooth, IconSmoothComponent other)
+        {
+            if (smooth.SmoothKey == null)
+                return false;
+
+            foreach (var prefix in other.MatchingKeyPrefixes)
+            {
+                if (smooth.SmoothKey.StartsWith(prefix, StringComparison.Ordinal))
+                    return true;
+            }
+
+            return false;
+        }
+        // DS14-end
 
         private void CalculateNewSpriteCorners(Entity<MapGridComponent>? gridEntity, IconSmoothComponent smooth, Entity<SpriteComponent> spriteEnt, TransformComponent xform, EntityQuery<IconSmoothComponent> smoothQuery)
         {

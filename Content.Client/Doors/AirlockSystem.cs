@@ -1,9 +1,11 @@
+using System.Numerics; // DS14
 using Content.Client.Wires.Visualizers;
 using Content.Shared.Doors.Components;
 using Content.Shared.Doors.Systems;
 using Content.Shared.Power;
 using Robust.Client.Animations;
 using Robust.Client.GameObjects;
+using Robust.Shared.Maths; // DS14
 
 namespace Content.Client.Doors;
 
@@ -25,19 +27,49 @@ public sealed class AirlockSystem : SharedAirlockSystem
     {
         base.FrameUpdate(frameTime);
 
-        var query = EntityQueryEnumerator<AirlockComponent, OccluderComponent>();
-        while (query.MoveNext(out var uid, out var airlock, out var occluder))
+        var query = EntityQueryEnumerator<AirlockComponent, OccluderComponent, SpriteComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var airlock, out var occluder, out var sprite, out var xform))
         {
+            ApplyFrontVisualOffset(uid, airlock, sprite, xform);
+
             if (airlock.VisualOccluderBounds is not { } bounds || occluder.BoundingBox == bounds)
                 continue;
 
             _occluderSystem.SetBoundingBox(uid, bounds, occluder);
         }
     }
+
+    private void ApplyFrontVisualOffset(
+        EntityUid uid,
+        AirlockComponent airlock,
+        SpriteComponent sprite,
+        TransformComponent xform)
+    {
+        if (airlock.FrontVisualOffset is not { } frontOffset)
+            return;
+
+        var localRotation = xform.LocalRotation;
+        var offset = localRotation.GetCardinalDir() is Direction.North or Direction.South
+            ? (-localRotation).RotateVec(frontOffset)
+            : Vector2.Zero;
+
+        if (sprite.Offset.EqualsApprox(offset))
+            return;
+
+        _sprite.SetOffset((uid, sprite), offset);
+    }
     // DS14-end
 
     private void OnComponentStartup(EntityUid uid, AirlockComponent comp, ComponentStartup args)
     {
+        // DS14-start
+        if (TryComp<SpriteComponent>(uid, out var sprite) &&
+            TryComp<TransformComponent>(uid, out var xform))
+        {
+            ApplyFrontVisualOffset(uid, comp, sprite, xform);
+        }
+        // DS14-end
+
         // Has to be on component startup because we don't know what order components initialize in and running this before DoorComponent inits _will_ crash.
         if (!TryComp<DoorComponent>(uid, out var door))
             return;

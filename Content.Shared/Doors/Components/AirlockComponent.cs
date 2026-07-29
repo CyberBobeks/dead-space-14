@@ -1,3 +1,4 @@
+using System.Numerics; // DS14
 using Content.Shared.DeviceLinking;
 using Content.Shared.Doors.Systems;
 using Robust.Shared.Audio;
@@ -92,6 +93,12 @@ public sealed partial class AirlockComponent : Component
     /// </summary>
     [DataField]
     public Box2? VisualOccluderBounds;
+
+    /// <summary>
+    /// Client-only grid-space offset for the front-facing 3D sprite directions.
+    /// </summary>
+    [DataField]
+    public Vector2? FrontVisualOffset;
     // DS14-end
 
     /// <summary>
