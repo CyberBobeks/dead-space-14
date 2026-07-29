@@ -7,7 +7,7 @@
     drawdepth: Mobs
     sprite: _DeadSpace/Structures/Doors/Airlocks/standard.rsi
     snapCardinals: false
-    offset: "0, 0"
+    offset: "0, 0.75"
     layers:
     - state: closed
       map: ["enum.DoorVisualLayers.Base"]

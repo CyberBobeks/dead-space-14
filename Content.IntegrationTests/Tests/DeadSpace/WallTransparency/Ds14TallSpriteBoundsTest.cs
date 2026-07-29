@@ -19,6 +19,7 @@ public sealed class Ds14TallSpriteBoundsTest
 {
     private static readonly Box2 GameplayOccluderBounds = new(-0.5f, -0.5f, 0.5f, 0.5f);
     private static readonly Box2 VisualOccluderBounds = new(-0.5f, -0.25f, 0.5f, 0.25f);
+    private static readonly Vector2 AirlockSpriteOffset = new(0f, 0.75f);
 
     [Test]
     public async Task TallWallWindowAndAllAirlockSpritesCalculateClientBounds()
@@ -180,7 +181,10 @@ public sealed class Ds14TallSpriteBoundsTest
                         sprite.BaseRSI?.Path.ToString(),
                         Is.EqualTo(expectedRsi),
                         $"{serverPrototype.ID} uses a departmental RSI.");
-                    Assert.That(sprite.Offset, Is.EqualTo(Vector2.Zero), $"{serverPrototype.ID} has a sprite offset.");
+                    Assert.That(
+                        sprite.Offset,
+                        Is.EqualTo(AirlockSpriteOffset),
+                        $"{serverPrototype.ID} has wrong sprite offset.");
                     Assert.That(sprite.SnapCardinals, Is.False, $"{serverPrototype.ID} snaps to cardinals.");
                     Assert.That(sprite.DrawDepth, Is.EqualTo(expectedDepth), $"{serverPrototype.ID} has wrong draw depth.");
 
