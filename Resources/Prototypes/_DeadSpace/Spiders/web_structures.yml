@@ -115,9 +115,9 @@
     tags:
       - Wall
   - type: Sprite
-    sprite: Structures/Walls/web.rsi
+    sprite: _DeadSpace/Structures/Walls/web.rsi
   - type: Icon
-    sprite: Structures/Walls/web.rsi
+    sprite: _DeadSpace/Structures/Walls/web.rsi
   - type: Destructible
     thresholds:
     - trigger:
@@ -135,7 +135,7 @@
         sound:
           collection: WoodDestroy
   - type: IconSmooth
-    key: webs
+    key: walls-web
     base: wall
   - type: Construction
     graph: WebStructures

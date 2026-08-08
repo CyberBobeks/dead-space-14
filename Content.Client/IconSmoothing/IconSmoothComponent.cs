@@ -33,14 +33,6 @@ namespace Content.Client.IconSmoothing
         [DataField]
         public List<string> AdditionalKeys = new();
 
-        // DS14-start
-        /// <summary>
-        ///     Other smoothing keys may connect to this entity when they start with one of these prefixes.
-        /// </summary>
-        [DataField]
-        public List<string> MatchingKeyPrefixes = new();
-        // DS14-end
-
         /// <summary>
         ///     Prepended to the RSI state.
         /// </summary>
@@ -139,5 +131,4 @@ namespace Content.Client.IconSmoothing
         /// </summary>
         NoSprite,
     }
-
 }

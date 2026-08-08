@@ -32,8 +32,8 @@
     containers:
       board: !type:Container
   - type: Door
-    openDrawDepth: Mobs # DS14
-    closedDrawDepth: Mobs # DS14
+    openDrawDepth: Doors # DS14
+    closedDrawDepth: Doors # DS14
     crushDamage:
       types:
         Blunt: 50

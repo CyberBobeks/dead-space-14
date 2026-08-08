@@ -154,7 +154,7 @@ public sealed class Ds14TallSpriteBoundsTest
         var clientPrototypes = client.ResolveDependency<IPrototypeManager>();
         var serverComponentFactory = server.ResolveDependency<IComponentFactory>();
         var clientComponentFactory = client.ResolveDependency<IComponentFactory>();
-        var expectedDepth = (int) DrawDepth.Mobs;
+        var expectedDepth = (int) DrawDepth.Doors;
         const string expectedRsi = "/Textures/_DeadSpace/Structures/Doors/Airlocks/standard.rsi";
 
         var prototypes = serverPrototypes.EnumeratePrototypes<EntityPrototype>()

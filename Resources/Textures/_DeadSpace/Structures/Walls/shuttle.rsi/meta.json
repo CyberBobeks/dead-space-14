@@ -1,0 +1,64 @@
+{
+    "version": 1,
+    "license": "Licensed under custom terms with restrictions on public hosting and commercial use, full text: https://raw.githubusercontent.com/dead-space-server/space-station-14-fobos/master/LICENSE.TXT",
+    "copyright": "By TheGypsyBaron (Discord: semkagamez)",
+    "size": {
+        "x": 32,
+        "y": 64
+  },
+    "states": [
+        {
+            "name": "full"
+        },
+        {
+            "name": "wall0",
+            "directions": 4
+        },
+        {
+            "name": "wall1",
+            "directions": 4
+        },
+        {
+            "name": "wall2",
+            "directions": 4
+        },
+        {
+            "name": "wall3",
+            "directions": 4
+        },
+        {
+            "name": "wall4",
+            "directions": 4
+        },
+        {
+            "name": "wall5",
+            "directions": 4
+        },
+        {
+            "name": "wall6",
+            "directions": 4
+        },
+        {
+            "name": "wall7",
+            "directions": 4
+        },
+        {
+            "name": "wall_construct-0"
+        },
+        {
+            "name": "wall_construct-1"
+        },
+        {
+            "name": "wall_construct-2"
+        },
+        {
+            "name": "wall_construct-3"
+        },
+        {
+            "name": "wall_construct-4"
+        },
+        {
+            "name": "wall_construct-5"
+        }
+    ]
+}

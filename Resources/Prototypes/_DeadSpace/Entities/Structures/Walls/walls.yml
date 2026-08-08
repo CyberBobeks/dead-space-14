@@ -262,6 +262,7 @@
   components:
   - type: Sprite
     sprite: _DeadSpace/Structures/Walls/reinforced_dark_diagonal.rsi
+    state: state0
   - type: Icon
     sprite: _DeadSpace/Structures/Walls/reinforced_dark_diagonal.rsi
     state: state0
@@ -293,8 +294,10 @@
   components:
   - type: Sprite
     sprite: _DeadSpace/Structures/Walls/titanaluminum_diagonal.rsi
+    state: state0
   - type: Icon
     sprite: _DeadSpace/Structures/Walls/titanaluminum_diagonal.rsi
+    state: state0
   - type: IconSmooth
     mode: Diagonal
     key: walls-titanaluminum-diagonal
