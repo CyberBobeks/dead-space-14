@@ -65,12 +65,7 @@
     price: 750
   - type: StealTarget
     stealGroup: ClothingShoesBootsMagAdv
-#DS14-start
-  - type: ComponentToggler
-    components:
-    - type: NoSlip
-    - type: RenegadeCANTRenegadeForce
-#DS14-end
+  # DS14: The obsolete force-immunity override was removed; base magboot toggling is inherited.
 
 - type: entity
   parent: [ClothingShoesBootsMagBase]
@@ -139,7 +134,7 @@
   - type: ComponentToggler
     components:
     - type: NoSlip
-    - type: RenegadeCANTRenegadeForce
+    # DS14: Obsolete Renegade force immunity removed with the retired force abilities.
   - type: ContainerContainer
     containers:
       item: !type:ContainerSlot

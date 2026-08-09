@@ -1,5 +1,3 @@
-ent-RenegadeForceShield = { ent-BaseShield }
-    .desc = { ent-BaseShield.desc }
 ent-RandomHumanoidSpawnerRenegade = { "" }
     .desc = { "" }
 ent-BaseRenegadeObjective = { ent-BaseObjective }

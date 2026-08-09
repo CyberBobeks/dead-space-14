@@ -38,9 +38,7 @@
     - type: Appearance
     - type: StaticPrice
       price: 400
-    - type: ClothingGrantComponent
-      component: 
-        - type: RenegadeCANTRenegadeForce
+    # DS14: Obsolete Renegade force immunity removed with the retired force abilities.
     - type: ClothingSlowOnDamageModifier
       modifier: 0.2
     - type: ContainerContainer

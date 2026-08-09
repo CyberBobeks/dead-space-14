@@ -102,6 +102,7 @@ public sealed partial class GunSystem : SharedGunSystem
         EntityCoordinates fromCoordinates, EntityCoordinates toCoordinates, out bool userImpulse, EntityUid? user = null, bool throwItems = false)
     {
         userImpulse = true;
+        var spreadMultiplier = 1f; // DS14
 
         if (user != null)
         {
@@ -112,6 +113,8 @@ public sealed partial class GunSystem : SharedGunSystem
                 userImpulse = false;
                 return;
             }
+
+            spreadMultiplier = MathF.Max(0f, selfEvent.SpreadMultiplier); // DS14
         }
 
         if (!TryGetShootMapDirection(fromCoordinates, toCoordinates, out var fromMap, out var mapDirection))
@@ -121,7 +124,7 @@ public sealed partial class GunSystem : SharedGunSystem
         }
 
         var mapAngle = mapDirection.ToAngle();
-        var angle = GetRecoilAngle(Timing.CurTime, gun, mapAngle);
+        var angle = GetRecoilAngle(Timing.CurTime, gun, mapAngle, spreadMultiplier); // DS14
 
         // If applicable, this ensures the projectile is parented to grid on spawn, instead of the map.
         var fromEnt = MapManager.TryFindGridAt(fromMap, out var gridUid, out _)
@@ -209,6 +212,7 @@ public sealed partial class GunSystem : SharedGunSystem
             {
                 var spreadEvent = new GunGetAmmoSpreadEvent(ammoSpreadComp.Spread);
                 RaiseLocalEvent(gun, ref spreadEvent);
+                spreadEvent.Spread *= spreadMultiplier; // DS14
 
                 var angles = LinearSpread(mapAngle - spreadEvent.Spread / 2,
                     mapAngle + spreadEvent.Spread / 2, ammoSpreadComp.Count);
@@ -318,7 +322,7 @@ public sealed partial class GunSystem : SharedGunSystem
         return angles;
     }
 
-    private Angle GetRecoilAngle(TimeSpan curTime, GunComponent component, Angle direction)
+    private Angle GetRecoilAngle(TimeSpan curTime, GunComponent component, Angle direction, float spreadMultiplier) // DS14
     {
         var timeSinceLastFire = (curTime - component.LastFire).TotalSeconds;
         var newTheta = MathHelper.Clamp(component.CurrentAngle.Theta + component.AngleIncreaseModified.Theta - component.AngleDecayModified.Theta * timeSinceLastFire, component.MinAngleModified.Theta, component.MaxAngleModified.Theta);
@@ -327,9 +331,9 @@ public sealed partial class GunSystem : SharedGunSystem
 
         // Convert it so angle can go either side.
         var random = Random.NextFloat(-0.5f, 0.5f);
-        var spread = component.CurrentAngle.Theta * random;
-        var angle = new Angle(direction.Theta + component.CurrentAngle.Theta * random);
-        DebugTools.Assert(spread <= component.MaxAngleModified.Theta);
+        var spread = component.CurrentAngle.Theta * random * spreadMultiplier; // DS14
+        var angle = new Angle(direction.Theta + spread); // DS14
+        DebugTools.Assert(Math.Abs(spread) <= component.MaxAngleModified.Theta * spreadMultiplier); // DS14
         return angle;
     }
 

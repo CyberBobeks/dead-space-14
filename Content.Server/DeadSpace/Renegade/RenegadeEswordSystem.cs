@@ -5,6 +5,7 @@ using Content.Server.Hands.Systems;
 using Content.Server.Popups;
 using Content.Shared.DeadSpace.Renegade.Components;
 using Content.Shared.Inventory.Events;
+using Content.Shared.Item.ItemToggle.Components;
 using Robust.Server.Audio;
 using Robust.Server.GameObjects;
 using Robust.Shared.Prototypes;
@@ -25,17 +26,27 @@ public sealed class RenegadeEswordSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<RenegadeEswordComponent, GotEquippedEvent>(OnEquipped);
+        SubscribeLocalEvent<RenegadeEswordComponent, ItemToggleActivateAttemptEvent>(OnActivateAttempt);
         SubscribeLocalEvent<RenegadeComponent, RecallRenegadeEswordEvent>(OnRecallEsword);
         SubscribeLocalEvent<RenegadeComponent, RenegadeEswordTeleport>(OnTeleportToEsword);
     }
 
     private void OnEquipped(Entity<RenegadeEswordComponent> ent, ref GotEquippedEvent args)
     {
-        if (!ent.Comp.IsConnected)
+        if (!ent.Comp.IsConnected && HasComp<RenegadeComponent>(args.Equipee))
         {
             ent.Comp.SwordOwner = args.Equipee;
             BindEsword(args.Equipee, ent.Comp);
         }
+    }
+
+    private void OnActivateAttempt(Entity<RenegadeEswordComponent> ent, ref ItemToggleActivateAttemptEvent args)
+    {
+        if (args.User is { } user && HasComp<RenegadeComponent>(user))
+            return;
+
+        args.Cancelled = true;
+        args.Popup = Loc.GetString("renegade-esword-activation-denied");
     }
 
     private void BindEsword(EntityUid uid, RenegadeEswordComponent comp)

@@ -16,9 +16,3 @@ public sealed partial class RenegadeCANTLightningAbilityComponent : Component
 {
     
 }
-
-[RegisterComponent, NetworkedComponent]
-public sealed partial class RenegadeCANTRenegadeForceComponent : Component
-{
-    
-}

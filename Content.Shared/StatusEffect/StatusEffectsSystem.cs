@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Content.Shared.Alert;
 using Content.Shared.Rejuvenate;
 using Content.Shared.StatusEffectNew;
+using Content.Shared.Stunnable; // DS14
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -178,6 +179,15 @@ namespace Content.Shared.StatusEffect
                 return false;
             if (!CanApplyEffect(uid, key, status))
                 return false;
+
+            // DS14-start
+            if (key == "Stun")
+            {
+                var ev = new ModifyStunDurationEvent(time);
+                RaiseLocalEvent(uid, ref ev);
+                time = ev.Duration;
+            }
+            // DS14-end
 
             // we already checked if it has the index in CanApplyEffect so a straight index and not tryindex here
             // is fine

@@ -5,7 +5,7 @@
   categories: [ HideSpawnMenu ]
   components:
   - type: Action
-    useDelay: 20
+    useDelay: 60
     icon: _DeadSpace/Renegade/actions/renegade_lightning.png
   - type: TargetAction
     range: 5
@@ -14,43 +14,71 @@
     event: !type:RenegadeLightningEvent
 
 - type: entity
-  id: ActionRenegadeForceOne
-  name: Поток силы
-  description: Отталкивает или притягивает одну цель.
+  id: ActionRenegadeArmorPiercingStrike
+  name: Бронебойный удар
+  description: Следующий успешный удар активным мечом ренегата нанесёт точный бронебойный урон.
   categories: [ HideSpawnMenu ]
   components:
   - type: Action
-    useDelay: 8
-    icon: _DeadSpace/Renegade/actions/force_Any.png
+    icon: _DeadSpace/Interface/Actions/slash.png
+    itemIconStyle: NoItem
+  - type: InstantAction
+    event: !type:RenegadeArmorPiercingStrikeEvent
+
+- type: entity
+  id: ActionRenegadeDisarmStrike
+  name: Обезоруживающий удар
+  description: Следующий успешный удар активным мечом ренегата выбьет предмет из активной руки цели.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    icon: Interface/Actions/disarm.png
+    itemIconStyle: NoItem
+  - type: InstantAction
+    event: !type:RenegadeDisarmStrikeEvent
+
+- type: entity
+  id: ActionRenegadeKnockdownStrike
+  name: Низвергающий удар
+  description: Следующий успешный удар активным мечом ренегата принудительно уложит цель на землю.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    icon:
+      sprite: _DeadSpace/Actions/cqc_actions.rsi
+      state: trip_punch
+    itemIconStyle: NoItem
+  - type: InstantAction
+    event: !type:RenegadeKnockdownStrikeEvent
+
+- type: entity
+  id: ActionRenegadeFocusedRage
+  name: Направленный гнев
+  description: На 40 секунд ускоряет ренегата и помогает игнорировать боль, путы и оглушение.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 100
+    icon: _DeadSpace/Demons/ability_icons/herald_enrage.png
+    itemIconStyle: NoItem
+  - type: InstantAction
+    event: !type:RenegadeFocusedRageEvent
+
+- type: entity
+  id: ActionRenegadeForceChoke
+  name: Удушение Силой
+  description: Поднимает одну цель в воздух, лишая её возможности двигаться и мешая вести точный огонь.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 15
+    icon: _DeadSpace/Demons/ability_icons/shadow_grapple.png
+    itemIconStyle: NoItem
   - type: TargetAction
-    range: 8
+    range: 5
   - type: EntityTargetAction
     canTargetSelf: false
-    event: !type:RenegadeForceOneEvent
-
-- type: entity
-  id: ActionRenegadeForce
-  name: Поток силы
-  description: Отталкивает или притягивает всё вокруг.
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Action
-    useDelay: 20
-    icon: _DeadSpace/Renegade/actions/force_all.png
-  - type: InstantAction
-    event: !type:RenegadeForceEvent
-
-- type: entity
-  id: ActionRenegadeShield
-  name: Щит силы
-  description: Барьер силы который отталкивает или поглощает удары.
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Action
-    useDelay: 13
-    icon: _DeadSpace/Renegade/actions/shield.png
-  - type: InstantAction
-    event: !type:RenegadeShieldEvent
+    event: !type:RenegadeForceChokeEvent
 
 - type: entity
   id: ActionRenegadeSubmission

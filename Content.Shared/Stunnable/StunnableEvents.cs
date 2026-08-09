@@ -15,6 +15,14 @@ namespace Content.Shared.Stunnable;
 [ByRefEvent]
 public record struct StunnedEvent;
 
+// DS14-start
+/// <summary>
+/// Raised before a finite stun or paralysis duration is applied so effects can modify it.
+/// </summary>
+[ByRefEvent]
+public record struct ModifyStunDurationEvent(TimeSpan Duration);
+// DS14-end
+
 /// <summary>
 ///     Raised on a stunned entity when something wants to remove the stunned component.
 /// </summary>

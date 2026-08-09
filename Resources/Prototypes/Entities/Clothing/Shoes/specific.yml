@@ -145,9 +145,7 @@
     sprintModifier: 1.3
   - type: FootstepModifier
     footstepSoundCollection: null
-  - type: ClothingGrantComponent
-    component: 
-      - type: RenegadeCANTRenegadeForce
+  # DS14: Obsolete Renegade force immunity removed with the retired force abilities.
 
 - type: entity
   parent: ClothingShoesBaseButcherable

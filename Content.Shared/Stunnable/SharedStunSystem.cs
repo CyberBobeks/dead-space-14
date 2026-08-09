@@ -180,6 +180,7 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (HasComp<StunImmuneComponent>(uid))
             return false;
 
+        duration = GetModifiedStunDuration(uid, duration); // DS14
         if (!_status.TryAddStatusEffectDuration(uid, StunId, duration))
             return false;
 
@@ -191,6 +192,9 @@ public abstract partial class SharedStunSystem : EntitySystem
     {
         if (HasComp<StunImmuneComponent>(uid))
             return false;
+
+        if (duration is { } finiteDuration) // DS14
+            duration = GetModifiedStunDuration(uid, finiteDuration); // DS14
 
         if (!_status.TryUpdateStatusEffectDuration(uid, StunId, duration))
             return false;
@@ -362,6 +366,7 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (duration == null)
             return TryUpdateParalyzeDuration(uid, duration, drop); // DS14
 
+        duration = GetModifiedStunDuration(uid, duration.Value); // DS14
         if (!_status.TryAddStatusEffectDuration(uid, StunId, duration.Value))
             return false;
 
@@ -377,6 +382,9 @@ public abstract partial class SharedStunSystem : EntitySystem
         if (HasComp<StunImmuneComponent>(uid))
             return false;
 
+        if (duration is { } finiteDuration) // DS14
+            duration = GetModifiedStunDuration(uid, finiteDuration); // DS14
+
         if (!_status.TryUpdateStatusEffectDuration(uid, StunId, duration))
             return false;
 
@@ -386,6 +394,15 @@ public abstract partial class SharedStunSystem : EntitySystem
 
         return true;
     }
+
+    // DS14-start
+    private TimeSpan GetModifiedStunDuration(EntityUid uid, TimeSpan duration)
+    {
+        var ev = new ModifyStunDurationEvent(duration);
+        RaiseLocalEvent(uid, ref ev);
+        return ev.Duration;
+    }
+    // DS14-end
 
     public bool TryUnstun(Entity<StunnedComponent?> entity)
     {

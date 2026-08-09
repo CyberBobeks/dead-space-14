@@ -11,6 +11,13 @@ public sealed partial class SelfBeforeGunShotEvent : CancellableEntityEventArgs,
     public readonly EntityUid Shooter;
     public readonly Entity<GunComponent> Gun;
     public readonly List<(EntityUid? Entity, IShootable Shootable)> Ammo;
+    // DS14-start
+    /// <summary>
+    /// Multiplies the gun recoil cone and any ammo pellet spread without preventing the shot.
+    /// </summary>
+    public float SpreadMultiplier = 1f;
+    // DS14-end
+
     public SelfBeforeGunShotEvent(EntityUid shooter, Entity<GunComponent> gun, List<(EntityUid? Entity, IShootable Shootable)> ammo)
     {
         Shooter = shooter;

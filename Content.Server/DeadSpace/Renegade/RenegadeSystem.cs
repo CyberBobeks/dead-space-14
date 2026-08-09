@@ -7,7 +7,7 @@ using Content.Shared.DeadSpace.Renegade;
 
 namespace Content.Server.DeadSpace.Renegade;
 
-public sealed class RenegadeSystem : SharedRenegadeSystem
+public sealed partial class RenegadeSystem : SharedRenegadeSystem
 {
     public override void Initialize()
     {
@@ -15,16 +15,19 @@ public sealed class RenegadeSystem : SharedRenegadeSystem
 
         SubscribeLocalEvent<RenegadeComponent, ComponentInit>(OnCompInit);
         SubscribeLocalEvent<RenegadeComponent, ComponentShutdown>(OnDown);
+        InitializeCombat();
     }
 
     private void OnCompInit(EntityUid uid, RenegadeComponent component, ComponentInit args)
     {
+        GrantCombatActions((uid, component));
         Timer.Spawn(500,
                     () => SetEyeColor(uid, component));
     }
 
     private void OnDown(EntityUid uid, RenegadeComponent component, ComponentShutdown args)
     {
+        RemoveCombatActions((uid, component));
         if (TryComp<HumanoidAppearanceComponent>(uid, out var huApComp))
         {
             huApComp.EyeColor = component.OldEyeColor;

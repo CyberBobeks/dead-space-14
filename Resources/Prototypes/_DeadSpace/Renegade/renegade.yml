@@ -1,18 +1,4 @@
 - type: entity
-  parent: BaseShield
-  id: RenegadeForceShield
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Sprite
-    sprite: Objects/Weapons/Melee/shields.rsi
-    state: force-icon
-  - type: Item
-    sprite: Objects/Weapons/Melee/shields.rsi
-    heldPrefix: force
-  - type: Reflect
-    reflectProb: 0.8
-
-- type: entity
   id: RandomHumanoidSpawnerRenegade
   components:
   - type: Sprite
@@ -45,21 +31,7 @@
   - type: Renegade
   - type: GunUsageBlocker
   - type: RenegadeSubmissionAbility
-  - type: RenegadeForceShieldAbility
-    proto: RenegadeForceShield
   - type: RenegadeLightningAbility
-  - type: RenegadeForceAbility
-    strenghtPush: 1
-    numberOfPulses: 1
-    range: 5
-    soundPush:
-      collection: RenegadePush
-      params:
-        volume: 3
-    soundPull:
-      collection: RenegadePull
-      params:
-        volume: 3
   - type: GhostRole
     name: ghost-role-information-renegade-name
     description: ghost-role-information-renegade-description
@@ -146,3 +118,14 @@
     colorOptions:
     - red
   - type: RenegadeEsword
+  - type: ItemToggle
+    onUse: false
+    onActivate: false
+    predictable: false
+  - type: Wieldable
+    freeHandsRequired: 1
+    wieldSound: null
+    wieldedInhandPrefix: null
+  - type: MeleeRequiresWield
+  - type: Reflect
+    reflectProb: 0.8

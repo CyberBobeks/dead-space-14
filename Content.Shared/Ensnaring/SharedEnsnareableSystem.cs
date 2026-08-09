@@ -3,6 +3,7 @@ using Content.Shared.CombatMode.Pacification;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.DeadSpace.Sandevistan;
+using Content.Shared.DeadSpace.Renegade.Components; // DS14
 using Content.Shared.DoAfter;
 using Content.Shared.Ensnaring.Components;
 using Content.Shared.Hands.EntitySystems;
@@ -164,6 +165,14 @@ public abstract class SharedEnsnareableSystem : EntitySystem
 
         var freeTime = user == target ? component.BreakoutTime : component.FreeTime;
         // DS14-start
+        if (user == target &&
+            TryComp<RenegadeFocusedRageComponent>(user, out var rage) &&
+            rage.LifeStage <= ComponentLifeStage.Running &&
+            _timing.CurTime < rage.EndsAt)
+        {
+            freeTime *= rage.EnsnareDurationMultiplier;
+        }
+
         if (TryComp<ActiveSandevistanComponent>(user, out var sandevistan) &&
             sandevistan.LifeStage <= ComponentLifeStage.Running &&
             _timing.CurTime < sandevistan.EndTime)

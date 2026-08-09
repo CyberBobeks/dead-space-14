@@ -1,5 +1,3 @@
-ent-RenegadeForceShield = { ent-BaseShield }
-    .desc = { ent-BaseShield.desc }
 ent-RandomHumanoidSpawnerRenegade = Ренегат
     .desc = { "" }
     .suffix = ТОЛЬКО ДЛЯ ИВЕНТОВ ИЛИ ТЕСТОВ, Без целей, Призрачная роль

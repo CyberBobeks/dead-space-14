@@ -14,11 +14,15 @@ public sealed partial class RenegadeSubmissionEvent : EntityTargetActionEvent { 
 
 public sealed partial class RenegadeLightningEvent : EntityTargetActionEvent { }
 
-public sealed partial class RenegadeForceOneEvent : EntityTargetActionEvent { }
+public sealed partial class RenegadeArmorPiercingStrikeEvent : InstantActionEvent { }
 
-public sealed partial class RenegadeForceEvent : InstantActionEvent { }
+public sealed partial class RenegadeDisarmStrikeEvent : InstantActionEvent { }
 
-public sealed partial class RenegadeShieldEvent : InstantActionEvent { }
+public sealed partial class RenegadeKnockdownStrikeEvent : InstantActionEvent { }
+
+public sealed partial class RenegadeFocusedRageEvent : InstantActionEvent { }
+
+public sealed partial class RenegadeForceChokeEvent : EntityTargetActionEvent { }
 
 [Serializable, NetSerializable]
 public sealed partial class RenegadeSubmissionDoAfterEvent : SimpleDoAfterEvent { }
