@@ -7,6 +7,10 @@
   components:
   - type: HumanoidAppearance
     species: Moth
+  # DS14-start
+  - type: CorpseBurning
+    messageType: chitin
+  # DS14-end
     hideLayersOnEquip:
     - HeadTop
   - type: Icon

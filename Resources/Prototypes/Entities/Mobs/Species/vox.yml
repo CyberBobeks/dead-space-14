@@ -152,6 +152,10 @@
       visible: false
   - type: HumanoidAppearance
     species: Vox
+  # DS14-start
+  - type: CorpseBurning
+    messageType: feathers
+  # DS14-end
     markingsDisplacement:
       Hair:
         sizeMaps:
