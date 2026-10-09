@@ -215,8 +215,11 @@ public sealed class RadioSystem : EntitySystem
             languageId = language.SelectedLanguage;
 
         string langName = _language.GetLangName(languageId);
+        var showLanguage = _language.ShowInChat(language?.SelectedLanguage); //DS-14
 
-        var wrappedMessage = Loc.GetString(speech.Bold ? "chat-radio-message-wrap-bold-lang" : "chat-radio-message-wrap-lang",
+        var wrappedMessage = Loc.GetString(speech.Bold
+                ? showLanguage ? "chat-radio-message-wrap-bold-lang" : "chat-radio-message-wrap-bold" //DS-14
+                : showLanguage ? "chat-radio-message-wrap-lang" : "chat-radio-message-wrap", //DS-14
             ("channel-color", channel.Color),
             ("fontType", speech.FontId),
             ("fontSize", speech.FontSize),

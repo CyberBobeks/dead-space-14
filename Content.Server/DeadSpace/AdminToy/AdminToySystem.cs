@@ -469,7 +469,10 @@ public sealed class AdminToySystem : EntitySystem
             lexiconMessage = _language.TransformWord(message, selectedLanguage);
         }
 
-        var wrappedMessage = Loc.GetString(speech.Bold ? "chat-manager-entity-say-bold-wrap-message-lang" : "chat-manager-entity-say-wrap-message-lang",
+        var showLanguage = _language.ShowInChat(selectedLanguage);
+        var wrappedMessage = Loc.GetString(speech.Bold
+                ? showLanguage ? "chat-manager-entity-say-bold-wrap-message-lang" : "chat-manager-entity-say-bold-wrap-message"
+                : showLanguage ? "chat-manager-entity-say-wrap-message-lang" : "chat-manager-entity-say-wrap-message",
             ("entityName", name),
             ("verb", verb),
             ("language", langName),
