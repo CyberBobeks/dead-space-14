@@ -110,6 +110,12 @@ public sealed class CelestialSystem : EntitySystem
     {
         var comp = ent.Comp;
 
+        // локальный вариант: и события, и объявления идут только на карту босса.
+        // Запоминаем ДО таймеров: босса могут удалить, а объявление всё равно
+        // не должно улетать на другие карты.
+        var localized = comp.LocalizedEvents;
+        var bossMap = Transform(ent).MapID;
+
         // клиент рисует оверлей катсцены сам
         RaiseCelestial(ent, new CelestialCutsceneStartEvent());
         RaiseCelestial(ent, new CelestialSpiritStageEvent(0));
@@ -123,18 +129,24 @@ public sealed class CelestialSystem : EntitySystem
             {
                 if (TerminatingOrDeleted(ent))
                     return;
-                if (comp.LocalizedEvents)
+                if (localized)
+                {
+                    // у локального варианта голос + субтитры, но только на его карте
+                    SpeakVoice(ent, -8f);
                     SpeakFor(ent, phrase, CutscenePhraseDuration);
+                }
                 else
                     SpeakGlobal(phrase, CutscenePhraseDuration);
 
                 // на последней фразе: особый звук и открытые глаза
                 if (phrase == CutscenePhrases[^1])
                 {
-                    _globalSound.PlayAnnonceGlobal(Filter.Broadcast(),
-                        _audio.ResolveSound(new SoundPathSpecifier(
-                            "/Audio/_DeadSpace/TEMP_FOR_EVENT/Ivan_KuvalDROID/sounds/Celestial_Talk_4.ogg")),
-                        new AudioParams { Volume = -2f });
+                    Announce(
+                        new SoundPathSpecifier(
+                            "/Audio/_DeadSpace/TEMP_FOR_EVENT/Ivan_KuvalDROID/sounds/Celestial_Talk_4.ogg"),
+                        new AudioParams { Volume = -2f },
+                        localized,
+                        bossMap);
                     RaiseCelestial(ent, new CelestialSpiritStageEvent(1));
                 }
             });
@@ -145,8 +157,8 @@ public sealed class CelestialSystem : EntitySystem
         Timer.Spawn(TimeSpan.FromSeconds(breachTime), () =>
         {
             // катсцена клиентская: продолжается даже без босса,
-            // RaiseCelestial сам фоллбэкнется в глобальную рассылку
-            RaiseCelestial(ent, new CelestialSpiritStageEvent(2));
+            // локальные события при этом остаются на карте босса
+            RaiseToBossMapOrAll(new CelestialSpiritStageEvent(2), localized, bossMap);
         });
 
         // конец катсцены: финальный крик
@@ -154,11 +166,13 @@ public sealed class CelestialSystem : EntitySystem
         Timer.Spawn(TimeSpan.FromSeconds(endTime), () =>
         {
             // финальный крик - без привязки к ентити (босс мог быть удалён)
-            _globalSound.PlayAnnonceGlobal(Filter.Broadcast(),
-                _audio.ResolveSound(new SoundPathSpecifier(
-                    "/Audio/_DeadSpace/TEMP_FOR_EVENT/Ivan_KuvalDROID/sounds/Celestial_screams_really_loudly.ogg")),
-                new AudioParams { Volume = 2f });
-            RaiseCelestial(ent, new CelestialCutsceneEndEvent());
+            Announce(
+                new SoundPathSpecifier(
+                    "/Audio/_DeadSpace/TEMP_FOR_EVENT/Ivan_KuvalDROID/sounds/Celestial_screams_really_loudly.ogg"),
+                new AudioParams { Volume = 2f },
+                localized,
+                bossMap);
+            RaiseToBossMapOrAll(new CelestialCutsceneEndEvent(), localized, bossMap);
 
             if (Exists(ent) && !TerminatingOrDeleted(ent))
                 comp.AttackTimer = 8f;
@@ -185,10 +199,11 @@ public sealed class CelestialSystem : EntitySystem
             {
                 comp.Phase2 = true;
 
-                _globalSound.PlayGlobalOnStation(uid,
-                    _audio.ResolveSound(new SoundPathSpecifier(
-                        "/Audio/_DeadSpace/TEMP_FOR_EVENT/Ivan_KuvalDROID/sounds/Roar_Phase2.ogg")),
-                    new AudioParams { Volume = 2f });
+                Sound(
+                    new SoundPathSpecifier(
+                        "/Audio/_DeadSpace/TEMP_FOR_EVENT/Ivan_KuvalDROID/sounds/Roar_Phase2.ogg"),
+                    uid,
+                    2f);
 
                 // крик "ВЫХОДА НЕТ" + атакует чаще и по большему числу людей
                 SpeakFor((uid, comp), "ВЫХОДА НЕТ.", 4f);
@@ -340,13 +355,35 @@ public sealed class CelestialSystem : EntitySystem
 
     private void RaiseToMapOrAll(EntityEventArgs ev)
     {
-        if (_deathCutsceneMap == null)
+        RaiseToBossMapOrAll(ev, _deathCutsceneMap != null, _deathCutsceneMap ?? MapId.Nullspace);
+    }
+
+    /// <summary>
+    /// Событие только игрокам указанной карты (локальный вариант) либо всем.
+    /// Не зависит от того, жив ли ещё ентити босса.
+    /// </summary>
+    private void RaiseToBossMapOrAll(EntityEventArgs ev, bool localized, MapId mapId)
+    {
+        if (!localized || mapId == MapId.Nullspace)
         {
             RaiseNetworkEvent(ev);
             return;
         }
 
-        RaiseNetworkEvent(ev, Filter.BroadcastMap(_deathCutsceneMap.Value));
+        RaiseNetworkEvent(ev, Filter.BroadcastMap(mapId));
+    }
+
+    /// <summary>
+    /// Announcement-звук (то, что игроки слышат как "объяву") - глобально
+    /// или только игрокам карты босса у локального варианта.
+    /// </summary>
+    private void Announce(SoundSpecifier sound, AudioParams audioParams, bool localized, MapId mapId)
+    {
+        var filter = localized && mapId != MapId.Nullspace
+            ? Filter.BroadcastMap(mapId)
+            : Filter.Broadcast();
+
+        _globalSound.PlayAnnonceGlobal(filter, _audio.ResolveSound(sound), audioParams);
     }
 
     private void Speak(string text, float duration)
@@ -675,9 +712,7 @@ public sealed class CelestialSystem : EntitySystem
 
             // рифт: текстура телепорта + звук появления
             Spawn("CelestialRift", new MapCoordinates(riftCenter, targetPos.MapId));
-            if (comp.FutilityCrackSound != null)
-                _globalSound.PlayGlobalOnStation(ent, _audio.ResolveSound(comp.FutilityCrackSound),
-                    new AudioParams { Volume = -4f });
+            Sound(comp.FutilityCrackSound, ent, -4f);
 
             // шар выходит из этого рифта
             var riftMap = new MapCoordinates(riftCenter, targetPos.MapId);
@@ -687,8 +722,7 @@ public sealed class CelestialSystem : EntitySystem
                     return;
 
                 if (comp.FutilityOrbSounds.Count > 0)
-                    _globalSound.PlayGlobalOnStation(ent, _audio.ResolveSound(_random.Pick(comp.FutilityOrbSounds)),
-                        new AudioParams { Volume = -8f });
+                    Sound(_random.Pick(comp.FutilityOrbSounds), ent, -8f);
 
                 var orb = Spawn("CelestialOrb", riftMap);
                 var orbComp = EnsureComp<CelestialOrbComponent>(orb);
@@ -745,9 +779,7 @@ public sealed class CelestialSystem : EntitySystem
 
     private void RunCutter(Entity<CelestialComponent> ent, CelestialComponent comp, EntityUid target, bool final = false)
     {
-        if (comp.CutterChargeSound != null)
-            _globalSound.PlayGlobalOnStation(ent, _audio.ResolveSound(comp.CutterChargeSound),
-                new AudioParams { Volume = -4f });
+        Sound(comp.CutterChargeSound, ent, -4f);
 
         var bossPos = _transform.GetMapCoordinates(ent);
         var targetPos = _transform.GetMapCoordinates(target);
@@ -770,11 +802,9 @@ public sealed class CelestialSystem : EntitySystem
                 return;
 
             if (final && comp.CutterFinalSound != null)
-                _globalSound.PlayGlobalOnStation(ent, _audio.ResolveSound(comp.CutterFinalSound),
-                    new AudioParams { Volume = -2f });
+                Sound(comp.CutterFinalSound, ent, -2f);
             else if (comp.CutterImpactSound != null)
-                _globalSound.PlayGlobalOnStation(ent, _audio.ResolveSound(comp.CutterImpactSound),
-                    new AudioParams { Volume = -4f });
+                Sound(comp.CutterImpactSound, ent, -4f);
 
             var damage = new DamageSpecifier();
             damage.DamageDict.TryAdd("Heat", comp.CutterDamage * 0.6f);
@@ -1115,9 +1145,7 @@ public sealed class CelestialSystem : EntitySystem
 
         SpeakFor(ent, comp.BloomLine, 4f);
 
-        if (comp.BloomChargeSound != null)
-            _globalSound.PlayGlobalOnStation(ent, _audio.ResolveSound(comp.BloomChargeSound),
-                new AudioParams { Volume = -2f });
+        Sound(comp.BloomChargeSound, ent, -2f);
 
         // три луча от тела Селестиала, каждый плавно следит за своей целью
         var bossMapPos = _transform.GetMapCoordinates(ent);
@@ -1135,9 +1163,7 @@ public sealed class CelestialSystem : EntitySystem
             if (TerminatingOrDeleted(ent))
                 return;
 
-            if (comp.BloomFireSound != null)
-                _globalSound.PlayGlobalOnStation(ent, _audio.ResolveSound(comp.BloomFireSound),
-                    new AudioParams { Volume = 0f });
+            Sound(comp.BloomFireSound, ent, 0f);
 
             // обход карты: медленный тик 0.25с, луч неторопливо преследует игрока
             var ticks = (int)(comp.BloomFireTime / 0.25f);
@@ -1404,12 +1430,25 @@ public sealed class CelestialSystem : EntitySystem
         return candidates.Take(max).ToList();
     }
 
-    private void Sound(SoundSpecifier? sound, EntityUid source)
+    /// <summary>
+    /// Звук босса/его снарядов. У локального варианта (<see cref="CelestialComponent.LocalizedEvents"/>)
+    /// он уходит ТОЛЬКО игрокам карты босса, у глобального - как раньше, через станцию и ПВС.
+    /// </summary>
+    private void Sound(SoundSpecifier? sound, EntityUid source, float volume = -8f)
     {
         if (sound == null)
             return;
-        _globalSound.PlayGlobalOnStation(source, _audio.ResolveSound(sound),
-            new AudioParams { Volume = -8f });
+
+        var resolved = _audio.ResolveSound(sound);
+        var audioParams = new AudioParams { Volume = volume };
+
+        if (TryComp<CelestialComponent>(source, out var comp) && comp.LocalizedEvents)
+        {
+            _audio.PlayGlobal(resolved, Filter.BroadcastMap(Transform(source).MapID), false, audioParams);
+            return;
+        }
+
+        _globalSound.PlayGlobalOnStation(source, resolved, audioParams);
     }
 
 }
