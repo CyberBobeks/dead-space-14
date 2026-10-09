@@ -8497,3 +8497,10 @@ Entries:
   changes:
   - type: Add
     message: Новый набор одежды для клоуна
+- id: 815
+  author: RIP6100
+  time: '2026-10-09T17:56:15.402703+00:00'
+  pr: 2488
+  changes:
+  - type: Tweak
+    message: Анимация дрожания
