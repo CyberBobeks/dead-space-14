@@ -8483,3 +8483,10 @@ Entries:
   - type: Fix
     message: Некорректное вычисление последнего паблиша, из-за чего в Discord происходил
       спам чейнджлогами.
+- id: 813
+  author: IvanKuvalda
+  time: '2026-10-09T13:44:23.501684+00:00'
+  pr: 2478
+  changes:
+  - type: Add
+    message: 'Добавлено новое поле в компонент Headset - colorEnd: . Делает градики.'
