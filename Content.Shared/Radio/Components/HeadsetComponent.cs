@@ -21,5 +21,8 @@ public sealed partial class HeadsetComponent : Component
     // DS14-start
     [DataField]
     public Color Color = Color.Lime;
+
+    [DataField]
+    public Color? ColorEnd;
     // DS14-end
 }
