@@ -160,6 +160,7 @@
     uis:
       enum.MagicMirrorUiKey.Key:
         toggleAction: HairstyleAction
+  - type: SlimeForm
   # DS14-end
 
 - type: entity
