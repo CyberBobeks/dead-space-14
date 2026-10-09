@@ -48,7 +48,7 @@ public sealed class EmoteAnimationSystem : SharedEmoteAnimationSystem
 
     private void OnGetState(EntityUid uid, EmoteAnimationComponent component, ref ComponentGetState args)
     {
-        args.State = new EmoteAnimationComponentState(component.AnimationId);
+        args.State = new EmoteAnimationComponentState(component.AnimationId, component.PlaySerial); //DS-14
     }
 
     private void OnMapInint(EntityUid uid, EmoteAnimationComponent component, MapInitEvent args)
@@ -109,6 +109,7 @@ public sealed class EmoteAnimationSystem : SharedEmoteAnimationSystem
     public void PlayEmoteAnimation(EntityUid uid, EmoteAnimationComponent component, string emoteId)
     {
         component.AnimationId = emoteId;
+        component.PlaySerial++; //DS-14
         Dirty(uid, component);
     }
 }

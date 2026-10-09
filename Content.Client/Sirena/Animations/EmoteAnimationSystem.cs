@@ -22,6 +22,7 @@ public sealed class EmoteAnimationSystem : SharedEmoteAnimationSystem
     [Dependency] private readonly SpriteSystem _sprite = default!; //DS-14
 
     private readonly Dictionary<EntityUid, EmoteFrameRestore> _frames = new(); //DS-14
+    private readonly Dictionary<EntityUid, int> _played = new(); //DS-14
 
     public override void Initialize()
     {
@@ -36,6 +37,8 @@ public sealed class EmoteAnimationSystem : SharedEmoteAnimationSystem
         if (args.Current is not EmoteAnimationComponentState state)
             return;
 
+        var replay = _played.TryGetValue(uid, out var seen) && seen != state.PlaySerial; //DS-14
+        _played[uid] = state.PlaySerial; //DS-14
         component.AnimationId = state.AnimationId;
 
         switch (component.AnimationId)
@@ -47,7 +50,8 @@ public sealed class EmoteAnimationSystem : SharedEmoteAnimationSystem
                 PlayEmoteStartTail(uid);
                 break;
             default:
-                PlayFromPrototype(uid, component.AnimationId); //DS-14
+                if (replay) //DS-14
+                    PlayFromPrototype(uid, component.AnimationId); //DS-14
                 break;
         }
     }
@@ -70,6 +74,7 @@ public sealed class EmoteAnimationSystem : SharedEmoteAnimationSystem
 
     private void OnShutdown(EntityUid uid, EmoteAnimationComponent component, ComponentShutdown args)
     {
+        _played.Remove(uid); //DS-14
         RestoreFrame(uid);
     }
 
