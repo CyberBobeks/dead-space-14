@@ -8490,3 +8490,10 @@ Entries:
   changes:
   - type: Add
     message: 'Добавлено новое поле в компонент Headset - colorEnd: . Делает градики.'
+- id: 814
+  author: IvanKuvalda
+  time: '2026-10-09T17:52:55.590474+00:00'
+  pr: 2490
+  changes:
+  - type: Add
+    message: Новый набор одежды для клоуна
