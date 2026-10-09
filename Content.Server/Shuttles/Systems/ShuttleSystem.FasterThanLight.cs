@@ -74,6 +74,14 @@ public sealed partial class ShuttleSystem
     private const float CoordRollover = 40000f;
     // Lua-end
 
+    // DS14-start
+    private const int ExpeditionLandingRings = 6;
+    private const int ExpeditionLandingSpokes = 8;
+
+    private const float ExpeditionLandingMinOffset = 10f;
+    private const float ExpeditionLandingMaxOffset = 72f;
+    // DS14-end
+
     /// <summary>
     /// How many times we try to proximity warp close to something before falling back to map-wideAABB.
     /// </summary>
@@ -1045,6 +1053,78 @@ public sealed partial class ShuttleSystem
 
         return true;
     }
+
+    // DS14-Start
+    public bool TryGetExpeditionLandingSpot(
+        EntityUid shuttleUid,
+        EntityCoordinates beacon,
+        Angle angle,
+        out EntityCoordinates coordinates)
+    {
+        coordinates = beacon;
+
+        var mapUid = beacon.EntityId;
+        var mapId = _transform.GetMapId(beacon);
+
+        if (mapId == MapId.Nullspace ||
+            mapUid != _mapSystem.GetMapOrInvalid(mapId) ||
+            !HasComp<SalvageExpeditionComponent>(mapUid) ||
+            !_gridQuery.TryGetComponent(mapUid, out var mapGrid) ||
+            !_gridQuery.TryGetComponent(shuttleUid, out var shuttleGrid))
+        {
+            return false;
+        }
+
+        for (var ring = 0; ring < ExpeditionLandingRings; ring++)
+        {
+            var radius = ExpeditionLandingMinOffset +
+                         (ExpeditionLandingMaxOffset - ExpeditionLandingMinOffset) *
+                         ring / (ExpeditionLandingRings - 1);
+
+            for (var spoke = 0; spoke < ExpeditionLandingSpokes; spoke++)
+            {
+                var direction = Angle.FromDegrees(spoke * 360f / ExpeditionLandingSpokes);
+                var position = beacon.Position + direction.RotateVec(new Vector2(radius, 0f));
+
+                if (!IsExpeditionLandingSpotClear(mapUid, mapGrid, shuttleGrid.LocalAABB, position, angle))
+                    continue;
+
+                // Centre the grid on the dot, same as TryGetFTLProximity does.
+                coordinates = new EntityCoordinates(mapUid, position - shuttleGrid.LocalAABB.Center);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsExpeditionLandingSpotClear(
+        EntityUid mapUid,
+        MapGridComponent mapGrid,
+        Box2 shuttleAabb,
+        Vector2 position,
+        Angle angle)
+    {
+        // The map entity is its own grid on expedition maps, so map coordinates are grid coordinates.
+        var bounds = new Box2Rotated(shuttleAabb.Translated(position), angle, position).CalcBoundingBox();
+
+        for (var x = (int) MathF.Floor(bounds.Left); x <= MathF.Ceiling(bounds.Right); x++)
+        {
+            for (var y = (int) MathF.Floor(bounds.Bottom); y <= MathF.Ceiling(bounds.Top); y++)
+            {
+                var indices = new Vector2i(x, y);
+
+                if (_mapSystem.TryGetTile(mapGrid, indices, out var tile) && !tile.IsEmpty)
+                    return false;
+
+                if (_mapSystem.GetAnchoredEntitiesEnumerator(mapUid, mapGrid, indices).MoveNext(out _))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+    // DS14-end
 
     private bool IsInsidePlanetPlayableArea(EntityUid mapUid, Box2Rotated shuttleBounds)
     {
