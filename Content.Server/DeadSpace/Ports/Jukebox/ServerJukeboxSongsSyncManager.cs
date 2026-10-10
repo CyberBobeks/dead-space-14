@@ -69,7 +69,7 @@ public sealed class ServerJukeboxSongsSyncManager : JukeboxSongsSyncManager
         }
         catch (Exception e)
         {
-            _log.GetSawmill("jukebox").Warning($"Could not receive song: {e.Message}");
+            _log.GetSawmill("jukebox").Warning($"Could not receive song from {transfer.Channel}: {e}");
         }
     }
 
@@ -82,7 +82,7 @@ public sealed class ServerJukeboxSongsSyncManager : JukeboxSongsSyncManager
         }
         catch (Exception e)
         {
-            _log.GetSawmill("jukebox").Warning($"Could not send song: {e.Message}");
+            _log.GetSawmill("jukebox").Warning($"Could not send song {path} to {channel}: {e}");
         }
     }
 

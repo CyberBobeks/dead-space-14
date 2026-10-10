@@ -36,7 +36,7 @@ public sealed class ClientJukeboxSongsSyncManager : JukeboxSongsSyncManager
         }
         catch (Exception e)
         {
-            _log.GetSawmill("jukebox").Warning($"Could not upload song: {e.Message}");
+            _log.GetSawmill("jukebox").Warning($"Could not upload song: {e}");
             return false;
         }
     }
@@ -54,7 +54,7 @@ public sealed class ClientJukeboxSongsSyncManager : JukeboxSongsSyncManager
         }
         catch (Exception e)
         {
-            _log.GetSawmill("jukebox").Warning($"Could not download song: {e.Message}");
+            _log.GetSawmill("jukebox").Warning($"Could not download song: {e}");
         }
     }
 }
