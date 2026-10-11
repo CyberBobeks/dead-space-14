@@ -1,0 +1,13 @@
+light_mode unshaded;
+blend_mode none;
+
+uniform sampler2D OBSTACLES;
+
+void fragment()
+{
+    highp vec2 uv = FRAGCOORD.xy * SCREEN_PIXEL_SIZE;
+    highp vec2 encoded = floor(uv * 65535.0);
+    COLOR = zTextureSpec(OBSTACLES, uv).r > 0.02
+        ? vec4(floor(encoded / 256.0), mod(encoded, 256.0)) / 255.0
+        : vec4(0.0);
+}

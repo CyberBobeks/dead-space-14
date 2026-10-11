@@ -1,0 +1,11 @@
+light_mode unshaded;
+blend_mode add;
+
+uniform sampler2D SOURCE_LIGHT;
+
+void fragment()
+{
+    highp vec2 uv = FRAGCOORD.xy * SCREEN_PIXEL_SIZE;
+    highp vec3 light = zTextureSpec(SOURCE_LIGHT, uv).rgb;
+    COLOR = vec4(light, 1.0);
+}

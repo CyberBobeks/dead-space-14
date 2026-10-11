@@ -1,0 +1,39 @@
+- type: shader
+  id: RayLightGeometry
+  kind: source
+  path: /Textures/_DeadSpace/Lighting/field_geometry.swsl
+
+- type: shader
+  id: RayLightSeed
+  kind: source
+  path: /Textures/_DeadSpace/Lighting/field_seed.swsl
+
+- type: shader
+  id: RayLightJump
+  kind: source
+  path: /Textures/_DeadSpace/Lighting/field_jump.swsl
+
+- type: shader
+  id: RayLightDirect
+  kind: source
+  path: /Textures/_DeadSpace/Lighting/ray_direct.swsl
+
+- type: shader
+  id: RayLightIndirect
+  kind: source
+  path: /Textures/_DeadSpace/Lighting/ray_indirect.swsl
+
+- type: shader
+  id: RayLightCompose
+  kind: source
+  path: /Textures/_DeadSpace/Lighting/ray_compose.swsl
+
+- type: shader
+  id: RayLightActorShadow
+  kind: source
+  path: /Textures/_DeadSpace/Lighting/actor_shadow.swsl
+
+- type: shader
+  id: RayLightCombine
+  kind: source
+  path: /Textures/_DeadSpace/Lighting/ray_combine.swsl

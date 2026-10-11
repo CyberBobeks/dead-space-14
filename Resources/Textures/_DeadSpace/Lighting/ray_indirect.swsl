@@ -1,0 +1,48 @@
+light_mode unshaded;
+blend_mode none;
+
+#include "/Textures/_DeadSpace/Lighting/ray_shared.swsl"
+
+uniform sampler2D DIRECT_LIGHT;
+uniform sampler2D FILL_LIGHT;
+uniform sampler2D ACTOR_SHADOWS;
+uniform highp vec2 RenderOrigin;
+uniform highp vec2 RenderSize;
+
+void fragment()
+{
+    highp vec2 uv = FRAGCOORD.xy * SCREEN_PIXEL_SIZE;
+    highp vec2 position = RenderOrigin + uv * RenderSize;
+    if (zTextureSpec(OBSTACLES, fieldUV(position)).r >= 0.95)
+    {
+        COLOR = vec4(0.0);
+        return;
+    }
+    highp float height = surfaceHeight(position);
+    highp vec3 bounced = vec3(0.0);
+    for (int ray = 0; ray < 8; ray++)
+    {
+        highp float angle = float(ray) * 0.78539816;
+        highp vec2 direction = vec2(cos(angle), sin(angle));
+        highp float traveled = WorldPixel;
+        for (int step = 0; step < 32; step++)
+        {
+            if (traveled >= 2.6)
+                break;
+            highp vec4 obstacle = nearestObstacle(position + direction * traveled);
+            if (obstacle.z < WorldPixel * 0.75 && obstacle.w > height + 0.025)
+            {
+                highp vec2 samplePosition = position + direction * max(0.0, traveled - WorldPixel * 1.5);
+                highp vec2 sampleUV = (samplePosition - RenderOrigin) / RenderSize;
+                highp vec3 incoming = zTextureSpec(DIRECT_LIGHT, sampleUV).rgb * zTextureSpec(ACTOR_SHADOWS, sampleUV).r;
+                incoming += zTextureSpec(FILL_LIGHT, sampleUV).rgb;
+                highp vec3 albedo = zTextureSpec(OBSTACLES, fieldUV(obstacle.xy)).gba;
+                highp float weight = max(0.0, 1.0 - traveled / 2.6);
+                bounced += incoming * albedo * weight * weight;
+                break;
+            }
+            traveled += max(obstacle.z, WorldPixel);
+        }
+    }
+    COLOR = vec4(bounced * (0.45 / 8.0), 1.0);
+}

@@ -1,0 +1,46 @@
+light_mode unshaded;
+blend_mode multiply;
+
+uniform sampler2D ACTOR_ATLAS;
+uniform highp vec2 RenderOrigin;
+uniform highp vec2 RenderSize;
+uniform highp vec2 LightPosition;
+uniform highp float LightHeight;
+uniform highp vec2 FootPosition;
+uniform highp float BodyWidth;
+uniform highp float BodyHeight;
+uniform highp vec2 BodyAnchor;
+uniform highp float ShadowStrength;
+uniform highp vec4 AtlasRegion;
+
+highp float castAlpha(highp vec2 position, highp vec2 source)
+{
+    highp vec2 toward = source - FootPosition;
+    highp float distance = length(toward);
+    if (distance < 0.1 || length(position - FootPosition) < 0.05)
+        return 0.0;
+    highp vec2 normal = toward / distance;
+    highp vec2 ray = source - position;
+    highp float denominator = dot(ray, normal);
+    if (abs(denominator) < 0.001)
+        return 0.0;
+    highp float fraction = dot(FootPosition - position, normal) / denominator;
+    if (fraction <= 0.0 || fraction >= 1.0)
+        return 0.0;
+    highp float height = fraction * LightHeight;
+    highp float across = dot(position + ray * fraction - FootPosition, vec2(-normal.y, normal.x));
+    highp vec2 bodyUV = vec2(across / BodyWidth, height / BodyHeight) + BodyAnchor;
+    if (bodyUV.x < 0.0 || bodyUV.x > 1.0 || bodyUV.y < 0.0 || bodyUV.y > 1.0)
+        return 0.0;
+    return zTextureSpec(ACTOR_ATLAS, AtlasRegion.xy + bodyUV * AtlasRegion.zw).a;
+}
+
+void fragment()
+{
+    highp vec2 position = RenderOrigin + FRAGCOORD.xy * SCREEN_PIXEL_SIZE * RenderSize;
+    highp float alpha = castAlpha(position, LightPosition) * ShadowStrength;
+    // Diffuse lighting leaves a compact contact shadow when incoming directions cancel out.
+    highp vec2 contact = (position - FootPosition) / max(0.1, BodyWidth * 0.22);
+    highp float contactAlpha = 0.18 * exp(-dot(contact, contact) * 2.0);
+    COLOR = vec4(vec3(0.0), max(alpha, contactAlpha));
+}

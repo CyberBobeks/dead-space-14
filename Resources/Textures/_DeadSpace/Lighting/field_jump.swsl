@@ -1,0 +1,38 @@
+light_mode unshaded;
+blend_mode none;
+
+uniform sampler2D SEEDS;
+uniform highp vec2 FieldSize;
+uniform highp float Jump;
+
+highp vec2 decodeSeed(highp vec4 encoded)
+{
+    return (encoded.rg * 65280.0 + encoded.ba * 255.0) / 65535.0;
+}
+
+void fragment()
+{
+    highp vec2 uv = FRAGCOORD.xy * SCREEN_PIXEL_SIZE;
+    highp vec4 nearest = vec4(0.0);
+    highp float best = 10000000000.0;
+    for (int x = -1; x <= 1; x++)
+    {
+        for (int y = -1; y <= 1; y++)
+        {
+            highp vec2 sampleUV = uv + vec2(float(x), float(y)) * SCREEN_PIXEL_SIZE * Jump;
+            if (sampleUV.x < 0.0 || sampleUV.y < 0.0 || sampleUV.x > 1.0 || sampleUV.y > 1.0)
+                continue;
+            highp vec4 encoded = zTextureSpec(SEEDS, sampleUV);
+            if (dot(encoded, vec4(1.0)) < 0.0001)
+                continue;
+            highp vec2 delta = (decodeSeed(encoded) - uv) * FieldSize;
+            highp float distance = dot(delta, delta);
+            if (distance < best)
+            {
+                best = distance;
+                nearest = encoded;
+            }
+        }
+    }
+    COLOR = nearest;
+}

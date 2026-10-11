@@ -1,0 +1,32 @@
+uniform sampler2D DISTANCE_FIELD;
+uniform sampler2D OBSTACLES;
+uniform highp vec2 FieldOrigin;
+uniform highp vec2 FieldSize;
+uniform highp float WorldPixel;
+uniform highp float ObstacleHeight;
+
+highp vec2 fieldUV(highp vec2 position)
+{
+    return (position - FieldOrigin) / FieldSize;
+}
+
+highp vec4 nearestObstacle(highp vec2 position)
+{
+    highp vec2 uv = fieldUV(position);
+    if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0)
+        return vec4(position, 1000.0, 0.0);
+    highp vec4 encoded = zTextureSpec(DISTANCE_FIELD, uv);
+    if (dot(encoded, vec4(1.0)) < 0.0001)
+        return vec4(position, 1000.0, 0.0);
+    highp vec2 seed = (encoded.rg * 65280.0 + encoded.ba * 255.0) / 65535.0;
+    highp vec2 point = FieldOrigin + seed * FieldSize;
+    highp float distance = max(0.0, length(point - position) - WorldPixel * 0.71);
+    return vec4(point, distance, zTextureSpec(OBSTACLES, seed).r * ObstacleHeight);
+}
+
+highp float surfaceHeight(highp vec2 position)
+{
+    highp float height = zTextureSpec(OBSTACLES, fieldUV(position)).r;
+    // Walls use the existing wall-bleed pass. Furniture and bodies receive light at their own height.
+    return height < 0.95 ? height * ObstacleHeight + 0.04 : 0.0;
+}

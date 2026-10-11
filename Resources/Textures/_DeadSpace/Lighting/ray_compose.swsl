@@ -1,0 +1,25 @@
+light_mode unshaded;
+blend_mode add;
+
+uniform sampler2D DIRECT_LIGHT;
+uniform sampler2D INDIRECT_LIGHT;
+uniform sampler2D FILL_LIGHT;
+uniform sampler2D ACTOR_SHADOWS;
+uniform highp vec2 FieldOrigin;
+uniform highp vec2 FieldSize;
+uniform highp vec2 ViewOrigin;
+uniform highp vec2 ViewXAxis;
+uniform highp vec2 ViewYAxis;
+
+void fragment()
+{
+    highp vec2 clip = FRAGCOORD.xy * SCREEN_PIXEL_SIZE * 2.0 - vec2(1.0);
+    highp vec2 position = ViewOrigin + ViewXAxis * clip.x + ViewYAxis * clip.y;
+    highp vec2 uv = (position - FieldOrigin) / FieldSize;
+    highp vec3 radiance = zTextureSpec(DIRECT_LIGHT, uv).rgb * zTextureSpec(ACTOR_SHADOWS, uv).r;
+    radiance += zTextureSpec(FILL_LIGHT, uv).rgb + zTextureSpec(INDIRECT_LIGHT, uv).rgb;
+    highp float peak = max(radiance.r, max(radiance.g, radiance.b));
+    // Compress overlapping radiance in the light buffer, before it illuminates any sprite or floor.
+    highp float exposed = 1.6 * (1.0 - exp(-peak * 0.75));
+    COLOR = vec4(radiance * (exposed / max(peak, 0.0001)), 1.0);
+}

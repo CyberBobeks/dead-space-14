@@ -1,0 +1,87 @@
+light_mode unshaded;
+blend_mode none;
+
+#include "/Textures/_DeadSpace/Lighting/ray_shared.swsl"
+
+uniform sampler2D LIGHT_MASK;
+uniform highp vec2 LightPosition;
+uniform highp vec2 MaskRotation;
+uniform highp vec3 LightColor;
+uniform highp float LightRadius;
+uniform highp float LightEnergy;
+uniform highp float LightHeight;
+uniform highp float LightSoftness;
+uniform highp vec2 SourceAxis;
+uniform highp float SourceSize;
+uniform highp vec2 RenderOrigin;
+uniform highp vec2 RenderSize;
+uniform bool HasMask;
+uniform bool CastShadows;
+
+highp float shadow(highp vec2 position, highp float height, highp vec2 source)
+{
+    highp vec2 delta = source - position;
+    highp float total = length(delta);
+    if (total < WorldPixel)
+        return 1.0;
+    highp vec2 direction = delta / total;
+    highp float traveled = WorldPixel * 0.6;
+    highp float visibility = 1.0;
+    for (int i = 0; i < 64; i++)
+    {
+        if (traveled >= total - WorldPixel)
+            break;
+        highp vec4 obstacle = nearestObstacle(position + direction * traveled);
+        highp float rayHeight = mix(height, LightHeight, traveled / total);
+        // A held lamp originates inside its holder's footprint; do not let the holder extinguish it.
+        bool ownFootprint = obstacle.w < ObstacleHeight - 0.1 && length(obstacle.xy - LightPosition) < 0.5;
+        if (!ownFootprint && obstacle.w > rayHeight + 0.025)
+        {
+            if (obstacle.z < WorldPixel * 0.55)
+                return 0.0;
+            if (LightSoftness > 0.0)
+                visibility = min(visibility, 12.0 * obstacle.z / (traveled * LightSoftness));
+        }
+        traveled += max(obstacle.z, WorldPixel);
+    }
+    return clamp(visibility, 0.0, 1.0);
+}
+
+void fragment()
+{
+    highp vec2 uv = FRAGCOORD.xy * SCREEN_PIXEL_SIZE;
+    highp vec2 position = RenderOrigin + uv * RenderSize;
+    highp vec2 delta = position - LightPosition;
+    highp float distanceSquared = dot(delta, delta);
+    if (distanceSquared >= LightRadius * LightRadius)
+        discard;
+    highp float vertical = max(0.65, LightHeight);
+    highp float cutoff = max(0.0, 1.0 - distanceSquared / (LightRadius * LightRadius));
+    highp float attenuation = vertical * vertical / (distanceSquared + vertical * vertical);
+    highp float value = LightEnergy * attenuation * cutoff * cutoff;
+    if (HasMask)
+    {
+        // File textures use top-down UVs; world-space Y points upward, like the native light quad.
+        highp vec2 local = vec2(dot(delta, MaskRotation), dot(delta, vec2(MaskRotation.y, -MaskRotation.x)));
+        value *= zTextureSpec(LIGHT_MASK, local / (2.0 * LightRadius) + vec2(0.5)).r;
+    }
+    if (value < 0.001)
+        discard;
+    highp float visibility = 1.0;
+    if (CastShadows)
+    {
+        highp float height = surfaceHeight(position);
+        if (SourceSize > 0.0)
+        {
+            highp vec2 extent = SourceAxis * SourceSize;
+            visibility = shadow(position, height, LightPosition - extent);
+            visibility += shadow(position, height, LightPosition - extent * 0.3333);
+            visibility += shadow(position, height, LightPosition + extent * 0.3333);
+            visibility += shadow(position, height, LightPosition + extent);
+            visibility *= 0.25;
+        }
+        else
+            visibility = shadow(position, height, LightPosition);
+    }
+    COLOR = vec4(LightColor * value * visibility, 1.0);
+}
